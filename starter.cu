@@ -18,15 +18,17 @@ int main(int argc, char* argv[])
     int width = image.cols;
     int height = image.rows;
     int _stride = image.step;
-    char myString[5];
+    int count = 0;
     for(int i = 0; i < height; i++)
     {
         for(int j = 0; j < width; j++)
         {
             uint8_t val = myData[ i * _stride + j];
-            cout<<"Image at : "<<i<<" , "<<j<<" - "<<unsigned(val)<<endl;
+            // cout<<"Image at : "<<i<<" , "<<j<<" - "<<unsigned(val)<<endl;
+            count = count + 1;
         }
     }
+    cout<<"Count="<<count<<endl;
     cout<<"Width="<<unsigned(width)<<endl;
     cout<<"Height="<<unsigned(height)<<endl;
     cout<<"Stride="<<unsigned(_stride)<<endl;
