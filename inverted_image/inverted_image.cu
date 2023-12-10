@@ -40,7 +40,8 @@ int main(int argc, char* argv[])
     if (!image.data) { 
         printf("No image data \n");  
     }
-    int *myData = image.data;
+    // int *myData = image.data;
+    unsigned char *myData = (unsigned char*)(image.data);
     int width = image.cols;
     int height = image.rows;
     int stride = image.step;
@@ -55,8 +56,8 @@ int main(int argc, char* argv[])
     {
         for(int j = 0; j < width; j++)
         {
-            int val = myData[ i * stride + j];
-            input_h[i * stride + j] = val;
+            unsigned char val = myData[ i * stride + j];
+            input_h[i * stride + j] = int(val);
         }
     }
     // output_h = (unsigned int *) malloc(sizeof(unsigned int) * image_size);
