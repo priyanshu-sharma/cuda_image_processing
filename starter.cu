@@ -12,6 +12,7 @@ int main(int argc, char* argv[])
     }
     else{
         printf("data\n");
+        printf(image.data);
     }
     return 0;
 }

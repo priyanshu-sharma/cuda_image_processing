@@ -12,6 +12,6 @@ In order to compile the code
 ```
 Clone the repo in blender first and run the code using
 
-nvcc filename.cu
+nvcc filename.cu `pkg-config --libs --cflags opencv`
 ./a.out
 ```
