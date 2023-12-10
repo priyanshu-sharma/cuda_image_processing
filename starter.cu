@@ -12,7 +12,20 @@ int main(int argc, char* argv[])
     }
     else{
         printf("data\n");
-        printf(image.data);
     }
+    uint8_t *myData = image.data;
+    int width = image.cols;
+    int height = image.rows;
+    int _stride = image.step;
+    for(int i = 0; i < height; i++)
+    {
+        for(int j = 0; j < width; j++)
+        {
+            uint8_t val = myData[ i * _stride + j];
+            printf(val);
+        }
+    }
+    printf("Width");
+    printf(width, height, _stride)
     return 0;
 }
