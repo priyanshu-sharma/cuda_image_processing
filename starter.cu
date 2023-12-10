@@ -7,8 +7,6 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-    printf("Working");
-    cout<<"Working fine"<<endl;
     Mat image = imread("demo.png", IMREAD_GRAYSCALE);
     if (!image.data) { 
         printf("No image data \n");  
@@ -29,10 +27,11 @@ int main(int argc, char* argv[])
             snprintf(myString, sizeof(myString), "%u", val);
         }
     }
-    printf("Width");
-    snprintf(myString, sizeof(myString), "%u", width);
-    snprintf(myString, sizeof(myString), "%u", height);
-    snprintf(myString, sizeof(myString), "%u", _stride);
+    cout<<"Width="<<unsigned(width)<<endl;
+    // printf("Width");
+    // snprintf(myString, sizeof(myString), "%u", width);
+    // snprintf(myString, sizeof(myString), "%u", height);
+    // snprintf(myString, sizeof(myString), "%u", _stride);
     // printf(width, height, _stride);
     return 0;
 }
