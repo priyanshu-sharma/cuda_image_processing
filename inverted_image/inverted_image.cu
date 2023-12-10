@@ -97,8 +97,8 @@ int main(int argc, char* argv[])
     {
         cout<<"Failed To save output"<<endl;
     }
-    bool out_check = imwrite("actual.png", image);
-    if (!out_check)
+    bool ac_check = imwrite("actual.png", image);
+    if (!ac_check)
     {
         cout<<"Failed To save actual"<<endl;
     }
