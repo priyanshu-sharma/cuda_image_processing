@@ -34,19 +34,6 @@ void scaling(unsigned int* input, unsigned int size) {
 	  /*************************************************************************/
 }
 
-void startTime(Timer* timer) {
-    gettimeofday(&(timer->startTime), NULL);
-}
-
-void stopTime(Timer* timer) {
-    gettimeofday(&(timer->endTime), NULL);
-}
-
-float elapsedTime(Timer timer) {
-    return ((float) ((timer.endTime.tv_sec - timer.startTime.tv_sec) \
-                + (timer.endTime.tv_usec - timer.startTime.tv_usec)/1.0e6));
-}
-
 
 int main(int argc, char* argv[])
 {
@@ -79,11 +66,10 @@ int main(int argc, char* argv[])
     unsigned int *o_image_vector = (unsigned int *) malloc(size);
     cudaMemcpy(image_vector_d, image_vector, size, cudaMemcpyHostToDevice);
     cudaDeviceSynchronize();
-    startTime(&timer);
+
     scaling(image_vector_d, size);
     cuda_ret = cudaDeviceSynchronize();
     if(cuda_ret != cudaSuccess) printf("Unable to launch kernel");
-    stopTime(&timer); printf("%f s\n", elapsedTime(timer));
 
     // Copy device variables from host ----------------------------------------
     printf("Copying data from device to host..."); fflush(stdout);
