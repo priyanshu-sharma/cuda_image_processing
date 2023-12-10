@@ -76,6 +76,8 @@ int main(int argc, char* argv[])
     verify(input_h, output_h, image_size);
     Mat input_image(height, width, CV_16U, input_h);
     Mat output_image(height, width, CV_16U, output_h);
+    cout<<int(input_image.cols), (input_image.rows)<<endl;
+    cout<<int(output_image.cols), (output_image.rows)<<endl;
     cout<<"DOne"<<endl;
     // for(int i = 0; i < height; i++)
     // {
@@ -85,16 +87,16 @@ int main(int argc, char* argv[])
     //         output_image.at<unsigned int>(i, j) = output_h[ i * _stride + j];
     //     }
     // }
-    // bool in_check = imwrite("input.png", input_image);
-    // if (!in_check)
-    // {
-    //     cout<<"Failed To save input"<<endl;
-    // }
-    // bool out_check = imwrite("output.png", output_image);
-    // if (!out_check)
-    // {
-    //     cout<<"Failed To save output"<<endl;
-    // }
+    bool in_check = imwrite("input.png", input_image);
+    if (!in_check)
+    {
+        cout<<"Failed To save input"<<endl;
+    }
+    bool out_check = imwrite("output.png", output_image);
+    if (!out_check)
+    {
+        cout<<"Failed To save output"<<endl;
+    }
     free(input_h);
     free(output_h);
     cudaFree(input_d);
