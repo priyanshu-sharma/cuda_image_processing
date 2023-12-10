@@ -27,6 +27,9 @@ int main(int argc, char* argv[])
         }
     }
     printf("Width");
-    printf(width, height, _stride);
+    snprintf(myString, sizeof(myString), "%u", width);
+    snprintf(myString, sizeof(myString), "%u", height);
+    snprintf(myString, sizeof(myString), "%u", _stride);
+    // printf(width, height, _stride);
     return 0;
 }
