@@ -43,13 +43,13 @@ int main(int argc, char* argv[])
     cudaMalloc((void **) &output_d, sizeof(unsigned int) * image_size);
     cudaDeviceSynchronize();
 
-    scaling(input_d, output_d, size);
+    scaling(input_d, output_d, image_size);
     cuda_ret = cudaDeviceSynchronize();
     if(cuda_ret != cudaSuccess) printf("Unable to launch kernel");
 
     // Copy device variables from host ----------------------------------------
     printf("Copying data from device to host..."); fflush(stdout);
-    cudaMemcpy(output_h, output_d, size, cudaMemcpyDeviceToHost);
+    cudaMemcpy(output_h, output_d, sizeof(unsigned int) * image_size, cudaMemcpyDeviceToHost);
     cout<<output_h[262143]<<" - "<<input_h[262143]<<endl;
     free(input_h);
     free(output_h);
