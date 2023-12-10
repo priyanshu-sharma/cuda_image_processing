@@ -8,6 +8,6 @@ int main(int argc, char* argv[])
     printf("Working");
     Mat image = imread("demo.png", IMREAD_GRAYSCALE);
     printf("Image data");
-    printf(image.empty());
+    printf(image.data);
     return 0;
 }
