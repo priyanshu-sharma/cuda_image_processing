@@ -7,6 +7,7 @@ int main(int argc, char* argv[])
 {
     printf("Working");
     Mat image = imread("demo.png", IMREAD_GRAYSCALE);
-    printf("Image data", image.data);
+    printf("Image data");
+    printf(image.empty());
     return 0;
 }
