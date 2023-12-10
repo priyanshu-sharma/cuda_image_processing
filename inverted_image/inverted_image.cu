@@ -74,8 +74,8 @@ int main(int argc, char* argv[])
     printf("Copying data from device to host..."); fflush(stdout);
     cudaMemcpy(output_h, output_d, sizeof(unsigned int) * image_size, cudaMemcpyDeviceToHost);
     verify(input_h, output_h, image_size);
-    Mat input_image(height, width, CV_16U, input_h);
-    Mat output_image(height, width, CV_16U, output_h);
+    Mat input_image(height, width, CV_32F, input_h);
+    Mat output_image(height, width, CV_32F, output_h);
     cout<<int(input_image.cols)<<" - "<<int(input_image.rows)<<endl;
     cout<<int(output_image.cols)<<" - "<<int(output_image.rows)<<endl;
     cout<<"DOne"<<endl;
@@ -87,17 +87,17 @@ int main(int argc, char* argv[])
     //         output_image.at<unsigned int>(i, j) = output_h[ i * _stride + j];
     //     }
     // }
-    bool in_check = imwrite("input.png", input_image);
+    bool in_check = imwrite("input.jpeg", input_image);
     if (!in_check)
     {
         cout<<"Failed To save input"<<endl;
     }
-    bool out_check = imwrite("output.png", output_image);
+    bool out_check = imwrite("output.jpeg", output_image);
     if (!out_check)
     {
         cout<<"Failed To save output"<<endl;
     }
-    bool ac_check = imwrite("actual.png", image);
+    bool ac_check = imwrite("actual.jpeg", image);
     if (!ac_check)
     {
         cout<<"Failed To save actual"<<endl;
