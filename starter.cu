@@ -24,14 +24,11 @@ int main(int argc, char* argv[])
         for(int j = 0; j < width; j++)
         {
             uint8_t val = myData[ i * _stride + j];
-            snprintf(myString, sizeof(myString), "%u", val);
+            cout<<"Image at : "<<i<<" , "<<j<<" - "<<unsigned(val)<<endl;
         }
     }
     cout<<"Width="<<unsigned(width)<<endl;
-    // printf("Width");
-    // snprintf(myString, sizeof(myString), "%u", width);
-    // snprintf(myString, sizeof(myString), "%u", height);
-    // snprintf(myString, sizeof(myString), "%u", _stride);
-    // printf(width, height, _stride);
+    cout<<"Height="<<unsigned(height)<<endl;
+    cout<<"Stride="<<unsigned(_stride)<<endl;
     return 0;
 }
