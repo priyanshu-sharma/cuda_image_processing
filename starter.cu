@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
         for(int j = 0; j < width; j++)
         {
             uint8_t val = myData[ i * _stride + j];
-            // cout<<"Image at : "<<i<<" , "<<j<<" - "<<unsigned(val)<<endl;
+            cout<<"Image at : "<<i<<" , "<<j<<" - "<<unsigned(val)<<endl;
             count = count + 1;
         }
     }
