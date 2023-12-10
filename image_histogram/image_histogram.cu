@@ -18,14 +18,20 @@ void verify(unsigned int* input_h, unsigned size, unsigned int* histogram_h, uns
     {
         test_histogram[input_h[i]] = test_histogram[input_h[i]] + 1;
     }
+    unsigned int count = 0;
     for(int i = 0; i < total_bins; i++)
     {
         if(test_histogram[i] != histogram_h[i])
         {
             cout<<"Difference in value - "<<i<<" - "<<test_histogram[i]<<" - "<<histogram_h[i]<<endl;
+            count = count + 1;
         }
     }
     free(test_histogram);
+    if (count == 0)
+    {
+        cout<<"All Test Passed Successfully"<<endl;
+    }
 }
 
 int main(int argc, char* argv[])
