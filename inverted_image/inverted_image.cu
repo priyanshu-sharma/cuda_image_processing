@@ -76,8 +76,8 @@ int main(int argc, char* argv[])
     verify(input_h, output_h, image_size);
     Mat input_image(height, width, CV_16U, input_h);
     Mat output_image(height, width, CV_16U, output_h);
-    cout<<int(input_image.cols), (input_image.rows)<<endl;
-    cout<<int(output_image.cols), (output_image.rows)<<endl;
+    cout<<int(input_image.cols)<<" - "<<int(input_image.rows)<<endl;
+    cout<<int(output_image.cols)<<" - "<<int(output_image.rows)<<endl;
     cout<<"DOne"<<endl;
     // for(int i = 0; i < height; i++)
     // {
