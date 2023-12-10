@@ -75,8 +75,8 @@ int main(int argc, char* argv[])
     cudaMemcpy(output_h, output_d, sizeof(unsigned int) * image_size, cudaMemcpyDeviceToHost);
     verify(input_h, output_h, image_size);
     unsigned int *in, *out;
-    Mat input_image(height, width, CV_32U);
-    Mat output_image(height, width, CV_32U);
+    Mat input_image(height, width, CV_16U);
+    Mat output_image(height, width, CV_16U);
     for(int i = 0; i < height; i++)
     {
         for(int j = 0; j < width; j++)
