@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
             image_vector.push_back(unsigned(val));
         }
     }
-    cout<<"Count="<<count<<endl;
+    // cout<<"Count="<<count<<endl;
     cout<<"Size="<<image_vector.size()<<endl;
     cout<<"Width="<<unsigned(width)<<endl;
     cout<<"Height="<<unsigned(height)<<endl;
