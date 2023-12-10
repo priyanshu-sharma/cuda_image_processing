@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
     // Copy device variables from host ----------------------------------------
     printf("Copying data from device to host..."); fflush(stdout);
     cudaMemcpy(output_h, output_d, sizeof(unsigned int) * image_size, cudaMemcpyDeviceToHost);
-    cout<<output_h[262143]<<" - "<<input_h[262143]<<endl;
+    cout<<output_h[100]<<" - "<<input_h[100]<<endl;
     free(input_h);
     free(output_h);
     cudaFree(input_d);
