@@ -11,7 +11,7 @@ OBJ	        = starter.o
 
 default: $(EXE)
 
-starter.o: starter.cu
+starter.o: starter.cu kernel.cu
 	$(NVCC) -c -o $@ starter.cu $(NVCC_FLAGS)
 
 $(EXE): $(OBJ)
