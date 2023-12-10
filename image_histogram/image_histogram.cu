@@ -7,6 +7,27 @@
 using namespace cv;
 using namespace std;
 
+void verify(unsigned int* input_h, unsigned size, unsigned int* histogram_h, unsigned int total_bins)
+{
+    unsigned int *test_histogram = (unsigned int *) malloc(sizeof(unsigned int) * total_bins);
+    for(int i = 0; i < total_bins; i++)
+    {
+        test_histogram[i] = 0;
+    }
+    for(int i = 0; i < size; i++)
+    {
+        test_histogram[input_h[i]] = test_histogram[input_h[i]] + 1;
+    }
+    for(int i = 0; i < total_bins; i++)
+    {
+        if(test_histogram[i] != histogram_h[i])
+        {
+            cout<<"Difference in value - "<<i<<" - "<<test_histogram[i]<<" - "<<histogram_h[i]<<endl;
+        }
+    }
+    free(test_histogram);
+}
+
 int main(int argc, char* argv[])
 {
     cudaError_t cuda_ret;
@@ -52,10 +73,11 @@ int main(int argc, char* argv[])
     // Copy device variables from host ----------------------------------------
     printf("Copying data from device to host..."); fflush(stdout);
     cudaMemcpy(histogram_h, histogram_d, sizeof(unsigned int) * total_bins, cudaMemcpyDeviceToHost);
-    for(int i = 0; i < total_bins; i++)
-    {
-        cout<<i<<" - "<<histogram_h[i]<<endl;
-    }
+    // for(int i = 0; i < total_bins; i++)
+    // {
+    //     cout<<i<<" - "<<histogram_h[i]<<endl;
+    // }
+    verify(input_h, image_size, histogram_h, total_bins);
     free(input_h);
     free(histogram_h);
     cudaFree(input_d);
