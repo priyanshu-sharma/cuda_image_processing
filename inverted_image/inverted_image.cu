@@ -74,27 +74,27 @@ int main(int argc, char* argv[])
     printf("Copying data from device to host..."); fflush(stdout);
     cudaMemcpy(output_h, output_d, sizeof(unsigned int) * image_size, cudaMemcpyDeviceToHost);
     verify(input_h, output_h, image_size);
-    unsigned int *in, *out;
-    Mat input_image(height, width, CV_16U);
-    Mat output_image(height, width, CV_16U);
-    for(int i = 0; i < height; i++)
-    {
-        for(int j = 0; j < width; j++)
-        {
-            input_image.at<unsigned int>(i, j) = input_h[ i * _stride + j];
-            output_image.at<unsigned int>(i, j) = output_h[ i * _stride + j];
-        }
-    }
-    bool in_check = imwrite("input.png", input_image);
-    if (!in_check)
-    {
-        cout<<"Failed To save input"<<endl;
-    }
-    bool out_check = imwrite("output.png", output_image);
-    if (!out_check)
-    {
-        cout<<"Failed To save output"<<endl;
-    }
+    Mat input_image(height, width, CV_16U, input_h);
+    Mat output_image(height, width, CV_16U, output_h);
+    cout<<"DOne"<<endl;
+    // for(int i = 0; i < height; i++)
+    // {
+    //     for(int j = 0; j < width; j++)
+    //     {
+    //         input_image.at<unsigned int>(i, j) = input_h[ i * _stride + j];
+    //         output_image.at<unsigned int>(i, j) = output_h[ i * _stride + j];
+    //     }
+    // }
+    // bool in_check = imwrite("input.png", input_image);
+    // if (!in_check)
+    // {
+    //     cout<<"Failed To save input"<<endl;
+    // }
+    // bool out_check = imwrite("output.png", output_image);
+    // if (!out_check)
+    // {
+    //     cout<<"Failed To save output"<<endl;
+    // }
     free(input_h);
     free(output_h);
     cudaFree(input_d);
