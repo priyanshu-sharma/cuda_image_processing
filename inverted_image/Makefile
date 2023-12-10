@@ -6,13 +6,13 @@ else
 NVCC_FLAGS  = -O3 `pkg-config --libs --cflags opencv`
 endif
 LD_FLAGS    = -lcudart `pkg-config --libs --cflags opencv`
-EXE	        = imverted_image
-OBJ	        = imverted_image.o
+EXE	        = inverted_image
+OBJ	        = inverted_image.o
 
 default: $(EXE)
 
-imverted_image.o: imverted_image.cu kernel.cu
-	$(NVCC) -c -o $@ imverted_image.cu $(NVCC_FLAGS)
+inverted_image.o: inverted_image.cu kernel.cu
+	$(NVCC) -c -o $@ inverted_image.cu $(NVCC_FLAGS)
 
 $(EXE): $(OBJ)
 	$(NVCC) $(OBJ) -o $(EXE) $(LD_FLAGS)
