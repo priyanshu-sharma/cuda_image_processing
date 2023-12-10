@@ -37,7 +37,6 @@ void scaling(unsigned int* input, unsigned int size) {
 
 int main(int argc, char* argv[])
 {
-    Timer timer;
     cudaError_t cuda_ret;
     Mat image = imread("demo.png", IMREAD_GRAYSCALE);
     if (!image.data) { 
