@@ -12,7 +12,7 @@ int main(int argc, char* argv[])
     cudaError_t cuda_ret;
     unsigned int *input_h, *histogram_h;
     unsigned int *input_d, *histogram_d;
-    unsigned int total_bins = 256
+    unsigned int total_bins = 256;
 
     Mat image = imread("demo.png", IMREAD_GRAYSCALE);
     if (!image.data) { 
