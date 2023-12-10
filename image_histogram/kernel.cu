@@ -7,7 +7,7 @@ __global__ void image_histogram_kernel(unsigned int* input, unsigned int size, u
 	
     /*************************************************************************/
     // INSERT KERNEL CODE HERE
-    __shared__ unsigned int local_ihisto[total_bins];
+    __shared__ unsigned int local_ihisto[256];
     int i, stride;
     for ( i = threadIdx.x ; i < total_bins ; i += BLOCK_SIZE )
     {
