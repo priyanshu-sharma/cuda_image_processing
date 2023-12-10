@@ -17,15 +17,16 @@ int main(int argc, char* argv[])
     int width = image.cols;
     int height = image.rows;
     int _stride = image.step;
+    char myString[5];
     for(int i = 0; i < height; i++)
     {
         for(int j = 0; j < width; j++)
         {
             uint8_t val = myData[ i * _stride + j];
-            printf(val);
+            snprintf(myString, sizeof(myString), "%u", val);
         }
     }
     printf("Width");
-    printf(width, height, _stride)
+    printf(width, height, _stride);
     return 0;
 }
