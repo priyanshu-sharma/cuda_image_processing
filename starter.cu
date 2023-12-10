@@ -1,11 +1,14 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <opencv2/opencv.hpp>
+#include <iostream>
 using namespace cv;
+using namespace std;
 
 int main(int argc, char* argv[])
 {
     printf("Working");
+    cout<<"Working fine"<<endl;
     Mat image = imread("demo.png", IMREAD_GRAYSCALE);
     if (!image.data) { 
         printf("No image data \n");  
