@@ -97,6 +97,11 @@ int main(int argc, char* argv[])
     {
         cout<<"Failed To save output"<<endl;
     }
+    bool out_check = imwrite("actual.png", image);
+    if (!out_check)
+    {
+        cout<<"Failed To save actual"<<endl;
+    }
     free(input_h);
     free(output_h);
     cudaFree(input_d);
