@@ -79,10 +79,11 @@ int main(int argc, char* argv[])
     // Copy device variables from host ----------------------------------------
     printf("Copying data from device to host..."); fflush(stdout);
     cudaMemcpy(histogram_h, histogram_d, sizeof(unsigned int) * total_bins, cudaMemcpyDeviceToHost);
-    // for(int i = 0; i < total_bins; i++)
-    // {
-    //     cout<<i<<" - "<<histogram_h[i]<<endl;
-    // }
+    cout<<"\nImage Histogram Distribution\n"<<endl;
+    for(int i = 0; i < total_bins; i++)
+    {
+        cout<<i<<" - "<<histogram_h[i]<<endl;
+    }
     verify(input_h, image_size, histogram_h, total_bins);
     free(input_h);
     free(histogram_h);
