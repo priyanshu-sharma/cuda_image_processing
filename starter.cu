@@ -1,9 +1,12 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <opencv2/opencv.hpp>
+using namespace cv;
 
 int main(int argc, char* argv[])
 {
-    printf("WOrking");
+    printf("Working");
+    Mat image = imread("demo.png", IMREAD_GRAYSCALE);
+    printf("Image data", image.data);
     return 0;
 }
