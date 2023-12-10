@@ -17,7 +17,7 @@ __global__ void scaling_kernel(unsigned int* input, unsigned int size)
     int i = threadIdx.x + blockDim.x * blockIdx.x;
     if (i < size)
     {
-        input[i] = 2 * input[i]
+        input[i] = 2 * input[i];
     }
 	/*************************************************************************/
 }
@@ -34,8 +34,24 @@ void scaling(unsigned int* input, unsigned int size) {
 	  /*************************************************************************/
 }
 
+void startTime(Timer* timer) {
+    gettimeofday(&(timer->startTime), NULL);
+}
+
+void stopTime(Timer* timer) {
+    gettimeofday(&(timer->endTime), NULL);
+}
+
+float elapsedTime(Timer timer) {
+    return ((float) ((timer.endTime.tv_sec - timer.startTime.tv_sec) \
+                + (timer.endTime.tv_usec - timer.startTime.tv_usec)/1.0e6));
+}
+
+
 int main(int argc, char* argv[])
 {
+    Timer timer;
+    cudaError_t cuda_ret;
     Mat image = imread("demo.png", IMREAD_GRAYSCALE);
     if (!image.data) { 
         printf("No image data \n");  
