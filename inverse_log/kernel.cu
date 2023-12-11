@@ -10,7 +10,7 @@ __global__ void inverse_log_kernel(double* input, double* output, double size)
     double c = 255 / log10f(256);
     if (i < size)
     {
-        output[i] = pow(10, c * input[i]) - 1;
+        output[i] = powf(10, c * input[i]) - 1;
     }
 	/*************************************************************************/
 }
