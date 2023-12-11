@@ -88,7 +88,7 @@ int main(int argc, char* argv[])
     cudaMemcpy(histogram_h, histogram_d, sizeof(double) * total_bins, cudaMemcpyDeviceToHost);
     cudaMemcpy(output_h, output_d, sizeof(double) * total_bins, cudaMemcpyDeviceToHost);
     cudaMemcpy(cdf_h, cdf_d, sizeof(double) * total_bins, cudaMemcpyDeviceToHost);
-    cudaMemcpy(final_output_h, final_output_d, sizeof(double) * total_bins, cudaMemcpyDeviceToHost);
+    cudaMemcpy(final_output_h, final_output_d, sizeof(double) * image_size, cudaMemcpyDeviceToHost);
     cout<<"\nImage Histogram Distribution\n"<<endl;
     for(int i = 0; i < total_bins; i++)
     {
