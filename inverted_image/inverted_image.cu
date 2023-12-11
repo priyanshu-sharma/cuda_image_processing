@@ -75,7 +75,14 @@ int main(int argc, char* argv[])
     // printf("Copying data from device to host..."); fflush(stdout);
     // cudaMemcpy(output_h, output_d, sizeof(unsigned int) * image_size, cudaMemcpyDeviceToHost);
     // verify(input_h, output_h, image_size);
-    Mat input_image(height, width, CV_32F, &input_h);
+    Mat input_image(height, width, CV_8UC1);
+    for(int i = 0; i < height; i++)
+    {
+        for(int j = 0; j < width; j++)
+        {
+            input_image.at<uchar>(Point(i, j)) = input_h[i * stride + j];
+        }
+    }
     // Mat output_image(height, width, CV_32F, output_h);
     cout<<int(input_image.cols)<<" - "<<int(input_image.rows)<<endl;
     // cout<<int(output_image.cols)<<" - "<<int(output_image.rows)<<endl;
