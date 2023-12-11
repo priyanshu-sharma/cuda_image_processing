@@ -1,6 +1,6 @@
 #include <stdio.h>
 # define BLOCK_SIZE 512
-# define MAX_NUMBER_OF_BLOCK 100
+# define MAX_NUMBER_OF_BLOCK 16
 # define COLOR_LEVEL 255
 
 __global__ void image_histogram_kernel(double* input, int size, double* histogram, double *output, double *cdf, double *final_output, int total_bins)
