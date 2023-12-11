@@ -10,8 +10,7 @@ using namespace std;
 // void verify(float* input_h, float* output_h, float size)
 // {
 //     float *test_output = (float *) malloc(sizeof(float) * size);
-//     float c = log(256) / log(10);
-//     c = 255/c;
+//     float c = 255/log10(256);
 //     for(int i = 0; i < size; i++)
 //     {
 //         test_output[i] = c * log(1 + input[i])
