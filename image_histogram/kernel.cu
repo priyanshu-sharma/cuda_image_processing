@@ -2,7 +2,7 @@
 # define BLOCK_SIZE 512
 # define MAX_NUMBER_OF_BLOCK 16
 
-__global__ void image_histogram_kernel(double* input, int size, double* histogram, int total_bins)
+__global__ void image_histogram_kernel(double* input, int size, double* histogram, double *output, int total_bins)
 {
 	
     /*************************************************************************/
@@ -32,13 +32,13 @@ __global__ void image_histogram_kernel(double* input, int size, double* histogra
     __syncthreads();
     for ( i = threadIdx.x ; i < total_bins ; i += BLOCK_SIZE )
     {
-        histogram[i] = histogram[i]/size;
+        output[i] = histogram[i]/size;
     }
 	/*************************************************************************/
 }
 
 
-void image_histogram(double* input, int size, double* histogram, int total_bins) {
+void image_histogram(double* input, int size, double* histogram, double *output, int total_bins) {
 
 	  /*************************************************************************/
     //INSERT CODE HERE
@@ -50,6 +50,6 @@ void image_histogram(double* input, int size, double* histogram, int total_bins)
     dim3 DimGrid(totalBlocks, 1, 1);
     dim3 DimBlock(BLOCK_SIZE, 1, 1);
 
-    image_histogram_kernel<<<DimGrid, DimBlock>>>(input, size, histogram, total_bins);
+    image_histogram_kernel<<<DimGrid, DimBlock>>>(input, size, histogram, output, total_bins);
 	  /*************************************************************************/
 }

@@ -37,8 +37,8 @@ using namespace std;
 int main(int argc, char* argv[])
 {
     cudaError_t cuda_ret;
-    double *input_h, *histogram_h;
-    double *input_d, *histogram_d;
+    double *input_h, *histogram_h, *output_h;
+    double *input_d, *histogram_d, *output_d;
     int total_bins = 256;
 
     Mat image = imread("demo.png", IMREAD_GRAYSCALE);
@@ -65,24 +65,27 @@ int main(int argc, char* argv[])
         }
     }
     histogram_h = (double *) malloc(sizeof(double) * total_bins);
+    output_h = (double *) malloc(sizeof(double) * total_bins);
 
     cudaMalloc((void **) &input_d, sizeof(double) * image_size);
     cudaMemcpy(input_d, input_h, sizeof(double) * image_size, cudaMemcpyHostToDevice);
     cudaMalloc((void **) &histogram_d, sizeof(double) * total_bins);
     cudaMemset(histogram_d, 0, total_bins * sizeof(double));
+    cudaMalloc((void **) &output_d, sizeof(double) * total_bins);
     cudaDeviceSynchronize();
 
-    image_histogram(input_d, image_size, histogram_d, total_bins);
+    image_histogram(input_d, image_size, histogram_d, output_d, total_bins);
     cuda_ret = cudaDeviceSynchronize();
     if(cuda_ret != cudaSuccess) printf("Unable to launch kernel");
 
     // Copy device variables from host ----------------------------------------
     printf("Copying data from device to host..."); fflush(stdout);
     cudaMemcpy(histogram_h, histogram_d, sizeof(double) * total_bins, cudaMemcpyDeviceToHost);
+    cudaMemcpy(output_h, output_d, sizeof(double) * total_bins, cudaMemcpyDeviceToHost);
     cout<<"\nImage Histogram Distribution\n"<<endl;
     for(int i = 0; i < total_bins; i++)
     {
-        cout<<i<<" - "<<histogram_h[i]<<endl;
+        cout<<i<<" - "<<histogram_h[i]<<" - "<<output_h[i]<<endl;
     }
     Mat input_image(height, width, CV_8UC1);
     for(int i = 0; i < height; i++)
@@ -100,7 +103,9 @@ int main(int argc, char* argv[])
     // verify(input_h, image_size, histogram_h, total_bins);
     free(input_h);
     free(histogram_h);
+    free(output_h);
     cudaFree(input_d);
     cudaFree(histogram_d);
+    cudaFree(output_d);
     return 0;
 }
