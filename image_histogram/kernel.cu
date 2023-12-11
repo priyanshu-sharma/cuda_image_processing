@@ -1,13 +1,14 @@
 #include <stdio.h>
 # define BLOCK_SIZE 512
 # define MAX_NUMBER_OF_BLOCK 16
+# define COLOR_LEVEL 255
 
-__global__ void image_histogram_kernel(unsigned int* input, unsigned int size, unsigned int* histogram, unsigned int total_bins)
+__global__ void image_histogram_kernel(double* input, int size, double* histogram, double *output, double *cdf, double *final_output, int total_bins)
 {
 	
     /*************************************************************************/
     // INSERT KERNEL CODE HERE
-    __shared__ unsigned int local_ihisto[256];
+    __shared__ int local_ihisto[256];
     int i, stride;
     for ( i = threadIdx.x ; i < total_bins ; i += BLOCK_SIZE )
     {
@@ -19,7 +20,8 @@ __global__ void image_histogram_kernel(unsigned int* input, unsigned int size, u
     stride = blockDim.x * gridDim.x;
     while ( i < size )
     {
-        atomicAdd(&(local_ihisto[input[i]]), 1);
+        int value = input[i];
+        atomicAdd(&(local_ihisto[value]), 1);
         i += stride;
     }
 
@@ -28,11 +30,39 @@ __global__ void image_histogram_kernel(unsigned int* input, unsigned int size, u
     {
         atomicAdd(&(histogram[i]), local_ihisto[i]);
     }
-	/*************************************************************************/
+    __syncthreads();
+    for ( i = threadIdx.x ; i < total_bins ; i += BLOCK_SIZE )
+    {
+        output[i] = histogram[i]/size;
+    }
+    __syncthreads();
+    double sum = 0;
+    i = 0;
+    while(i < threadIdx.x + 1)
+    {
+        sum = sum + output[i];
+        i = i + 1;
+    }
+    cdf[ threadIdx.x ] = floorf(COLOR_LEVEL * sum);
+    __syncthreads();
+    i = threadIdx.x + blockIdx.x * blockDim.x;
+    stride = blockDim.x * gridDim.x;
+    while ( i < size )
+    {
+        int equalized_value = input[i];
+        final_output[i] = cdf[equalized_value];
+        i += stride;
+    }
+    // for ( i = threadIdx.x ; i < size ; i += BLOCK_SIZE )
+    // {
+    //     int equalized_value = input[i];
+    //     final_output[i] = cdf[equalized_value];
+    // }
+    /*************************************************************************/
 }
 
 
-void image_histogram(unsigned int* input, unsigned int size, unsigned int* histogram, unsigned int total_bins) {
+void image_histogram(double* input, int size, double* histogram, double *output, double *cdf, double *final_output, int total_bins) {
 
 	  /*************************************************************************/
     //INSERT CODE HERE
@@ -44,6 +74,6 @@ void image_histogram(unsigned int* input, unsigned int size, unsigned int* histo
     dim3 DimGrid(totalBlocks, 1, 1);
     dim3 DimBlock(BLOCK_SIZE, 1, 1);
 
-    image_histogram_kernel<<<DimGrid, DimBlock>>>(input, size, histogram, total_bins);
+    image_histogram_kernel<<<DimGrid, DimBlock>>>(input, size, histogram, output, cdf, final_output, total_bins);
 	  /*************************************************************************/
 }

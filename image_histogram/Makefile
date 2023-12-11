@@ -3,7 +3,7 @@ NVCC        = nvcc
 ifeq (,$(shell which nvprof))
 NVCC_FLAGS  = -O3 
 else
-NVCC_FLAGS  = -O3 `pkg-config --libs --cflags opencv`
+NVCC_FLAGS  = -O3 -arch=sm_61 `pkg-config --libs --cflags opencv`
 endif
 LD_FLAGS    = -lcudart `pkg-config --libs --cflags opencv`
 EXE	        = image_histogram
