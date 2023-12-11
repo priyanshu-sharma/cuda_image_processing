@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <bits/stdc++.h>
+#include <math.h>
 # define BLOCK_SIZE 512
 
 
@@ -9,10 +9,11 @@ __global__ void log_transformation_kernel(float* input, float* output, float siz
     /*************************************************************************/
     // INSERT KERNEL CODE HERE
     int i = threadIdx.x + blockDim.x * blockIdx.x;
-    float c = 255/log10(256);
+    float c = log(256)/log(10);
+    c = 255/c;
     if (i < size)
     {
-        output[i] = c * log10(1 + input[i]);
+        output[i] = c * log(1 + input[i]);
     }
 	/*************************************************************************/
 }
