@@ -34,6 +34,13 @@ __global__ void image_histogram_kernel(double* input, int size, double* histogra
     {
         output[i] = histogram[i]/size;
     }
+    __syncthreads();
+    double sum = 0;
+    for ( i = threadIdx.x ; i < total_bins ; i += BLOCK_SIZE )
+    {
+        sum = sum + output[i];
+        output[i] = sum;
+    }
 	/*************************************************************************/
 }
 
