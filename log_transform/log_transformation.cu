@@ -44,10 +44,10 @@ int main(int argc, char* argv[])
     }
     // int *myData = image.data;
     unsigned char *myData = (unsigned char*)(image.data);
-    float width = image.cols;
-    float height = image.rows;
-    float stride = image.step;
-    float image_size = width * height;
+    int width = image.cols;
+    int height = image.rows;
+    int stride = image.step;
+    int image_size = width * height;
     cout<<"Image Size="<<image_size<<endl;
     cout<<"Width="<<width<<endl;
     cout<<"Height="<<height<<endl;

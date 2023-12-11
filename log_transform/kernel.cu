@@ -12,7 +12,7 @@ __global__ void log_transformation_kernel(float* input, float* output, float siz
     c = 255/c;
     if (i < size)
     {
-        output[i] = c * log(1 + input[i])
+        output[i] = c * log(1 + input[i]);
     }
 	/*************************************************************************/
 }
