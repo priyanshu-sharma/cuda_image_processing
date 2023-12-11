@@ -20,7 +20,7 @@ __global__ void image_histogram_kernel(double* input, int size, double* histogra
     int value;
     while ( i < size )
     {
-        value = input[i]
+        value = input[i];
         atomicAdd(&(local_ihisto[value]), 1);
         i += stride;
     }
