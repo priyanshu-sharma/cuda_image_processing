@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
     {
         for(int j = 0; j < width; j++)
         {
-            input_image.at<uchar>(Point(i, j)) = input_h[i * stride + j];
+            input_image.at<uchar>(Point(j, i)) = input_h[i * stride + j];
         }
     }
     // Mat output_image(height, width, CV_32F, output_h);
