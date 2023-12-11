@@ -43,7 +43,7 @@ __global__ void image_histogram_kernel(double* input, int size, double* histogra
         sum = sum + output[i];
         i = i + 1;
     }
-    cdf[ threadIdx.x ] = COLOR_LEVEL * sum;
+    cdf[ threadIdx.x ] = floorf(COLOR_LEVEL * sum);
     /*************************************************************************/
 }
 
