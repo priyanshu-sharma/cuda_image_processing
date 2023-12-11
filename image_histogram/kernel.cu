@@ -17,9 +17,11 @@ __global__ void image_histogram_kernel(double* input, int size, double* histogra
 
     i = threadIdx.x + blockIdx.x * blockDim.x;
     stride = blockDim.x * gridDim.x;
+    int value;
     while ( i < size )
     {
-        atomicAdd(&(local_ihisto[int(input[i])]), 1);
+        value = input[i]
+        atomicAdd(&(local_ihisto[value]), 1);
         i += stride;
     }
 
