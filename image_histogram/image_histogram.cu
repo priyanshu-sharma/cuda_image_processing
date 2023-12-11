@@ -37,7 +37,7 @@ using namespace std;
 int main(int argc, char* argv[])
 {
     cudaError_t cuda_ret;
-    double *input_h, *histogram_h, *output_h, *cdf_h, *final_output_h;
+    double *input_h, *histogram_h, *output_h, *cdf_h, *final_output_h, *ff;
     double *input_d, *histogram_d, *output_d, *cdf_d, *final_output_d;
     int total_bins = 256;
 
@@ -68,6 +68,7 @@ int main(int argc, char* argv[])
     output_h = (double *) malloc(sizeof(double) * total_bins);
     cdf_h = (double *) malloc(sizeof(double) * total_bins);
     final_output_h = (double *) malloc(sizeof(double) * image_size);
+    ff = (double *) malloc(sizeof(double) * image_size);
 
     cudaMalloc((void **) &input_d, sizeof(double) * image_size);
     cudaMemcpy(input_d, input_h, sizeof(double) * image_size, cudaMemcpyHostToDevice);
@@ -93,14 +94,22 @@ int main(int argc, char* argv[])
     {
         cout<<i<<" - "<<histogram_h[i]<<" - "<<output_h[i]<<" - "<<cdf_h[i]<<endl;
     }
+    for(int i = 0; i < size; i++)
+    {
+        int finalv = input_h[i];
+        ff[i] = cdf_h[finalv];
+
+    }
     Mat input_image(height, width, CV_8UC1);
     Mat output_image(height, width, CV_8UC1);
+    Mat ff_im(height, width, CV_8UC1);
     for(int i = 0; i < height; i++)
     {
         for(int j = 0; j < width; j++)
         {
             input_image.at<uchar>(Point(j, i)) = input_h[i * stride + j];
             output_image.at<uchar>(Point(j, i)) = final_output_h[i * stride + j];
+            ff_im.at<uchar>(Point(j, i)) = ff[i * stride + j];
         }
     }
     bool in_check = imwrite("input.jpeg", input_image);
@@ -113,12 +122,18 @@ int main(int argc, char* argv[])
     {
         cout<<"Failed To save output"<<endl;
     }
+    bool ff_check = imwrite("ff.jpeg", ff_im);
+    if (!ff_check)
+    {
+        cout<<"Failed To save ff"<<endl;
+    }
     // verify(input_h, image_size, histogram_h, total_bins);
     free(input_h);
     free(histogram_h);
     free(output_h);
     free(cdf_h);
     free(final_output_h);
+    free(ff);
     cudaFree(input_d);
     cudaFree(histogram_d);
     cudaFree(output_d);
