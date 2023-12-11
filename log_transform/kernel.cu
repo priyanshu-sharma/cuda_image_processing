@@ -9,8 +9,7 @@ __global__ void log_transformation_kernel(float* input, float* output, float siz
     /*************************************************************************/
     // INSERT KERNEL CODE HERE
     int i = threadIdx.x + blockDim.x * blockIdx.x;
-    __constant__ float c = log(256)/log(10);
-    c = 255/c;
+    __constant__ float c = 255 / (log(256)/log(10));
     if (i < size)
     {
         output[i] = c * log(1 + input[i]);
