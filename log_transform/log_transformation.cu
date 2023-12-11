@@ -7,10 +7,10 @@
 using namespace cv;
 using namespace std;
 
-// void verify(float* input_h, float* output_h, float size)
+// void verify(double* input_h, double* output_h, double size)
 // {
-//     float *test_output = (float *) malloc(sizeof(float) * size);
-//     float c = 255/log10(256);
+//     double *test_output = (double *) malloc(sizeof(double) * size);
+//     double c = 255/log10(256);
 //     for(int i = 0; i < size; i++)
 //     {
 //         test_output[i] = c * log(1 + input[i])
@@ -34,8 +34,8 @@ using namespace std;
 int main(int argc, char* argv[])
 {
     cudaError_t cuda_ret;
-    float *input_h, *output_h;
-    float *input_d, *output_d;
+    double *input_h, *output_h;
+    double *input_d, *output_d;
 
     Mat image = imread("demo.png", IMREAD_GRAYSCALE);
     if (!image.data) { 
@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
     cout<<"Height="<<height<<endl;
     cout<<"Stride="<<stride<<endl;
 
-    input_h = (float *) malloc(sizeof(float) * image_size);
+    input_h = (double *) malloc(sizeof(double) * image_size);
     for(int i = 0; i < height; i++)
     {
         for(int j = 0; j < width; j++)
@@ -61,11 +61,11 @@ int main(int argc, char* argv[])
             input_h[i * stride + j] = int(val);
         }
     }
-    output_h = (float *) malloc(sizeof(float) * image_size);
+    output_h = (double *) malloc(sizeof(double) * image_size);
 
-    cudaMalloc((void **) &input_d, sizeof(float) * image_size);
-    cudaMemcpy(input_d, input_h, sizeof(float) * image_size, cudaMemcpyHostToDevice);
-    cudaMalloc((void **) &output_d, sizeof(float) * image_size);
+    cudaMalloc((void **) &input_d, sizeof(double) * image_size);
+    cudaMemcpy(input_d, input_h, sizeof(double) * image_size, cudaMemcpyHostToDevice);
+    cudaMalloc((void **) &output_d, sizeof(double) * image_size);
     cudaDeviceSynchronize();
 
     log_transformation(input_d, output_d, image_size);
@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
 
     // Copy device variables from host ----------------------------------------
     printf("Copying data from device to host..."); fflush(stdout);
-    cudaMemcpy(output_h, output_d, sizeof(float) * image_size, cudaMemcpyDeviceToHost);
+    cudaMemcpy(output_h, output_d, sizeof(double) * image_size, cudaMemcpyDeviceToHost);
     // verify(input_h, output_h, image_size);
     Mat input_image(height, width, CV_8UC1);
     Mat output_image(height, width, CV_8UC1);
