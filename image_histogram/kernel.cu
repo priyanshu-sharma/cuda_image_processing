@@ -3,7 +3,7 @@
 # define MAX_NUMBER_OF_BLOCK 16
 # define COLOR_LEVEL 255
 
-__global__ void image_histogram_kernel(double* input, int size, double* histogram, double *output, double *cdf, int total_bins)
+__global__ void image_histogram_kernel(double* input, int size, double* histogram, double *output, double *cdf, double *final_output, int total_bins)
 {
 	
     /*************************************************************************/
@@ -44,11 +44,20 @@ __global__ void image_histogram_kernel(double* input, int size, double* histogra
         i = i + 1;
     }
     cdf[ threadIdx.x ] = floorf(COLOR_LEVEL * sum);
+    __syncthreads();
+    i = threadIdx.x + blockIdx.x * blockDim.x;
+    stride = blockDim.x * gridDim.x;
+    while ( i < size )
+    {
+
+        final_output[i] = cdf[input[i]];
+        i += stride;
+    }
     /*************************************************************************/
 }
 
 
-void image_histogram(double* input, int size, double* histogram, double *output, double *cdf, int total_bins) {
+void image_histogram(double* input, int size, double* histogram, double *output, double *cdf, double *final_output, int total_bins) {
 
 	  /*************************************************************************/
     //INSERT CODE HERE
@@ -60,6 +69,6 @@ void image_histogram(double* input, int size, double* histogram, double *output,
     dim3 DimGrid(totalBlocks, 1, 1);
     dim3 DimBlock(BLOCK_SIZE, 1, 1);
 
-    image_histogram_kernel<<<DimGrid, DimBlock>>>(input, size, histogram, output, cdf, total_bins);
+    image_histogram_kernel<<<DimGrid, DimBlock>>>(input, size, histogram, output, cdf, final_output, total_bins);
 	  /*************************************************************************/
 }

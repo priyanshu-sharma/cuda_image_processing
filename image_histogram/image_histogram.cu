@@ -37,8 +37,8 @@ using namespace std;
 int main(int argc, char* argv[])
 {
     cudaError_t cuda_ret;
-    double *input_h, *histogram_h, *output_h, *cdf_h;
-    double *input_d, *histogram_d, *output_d, *cdf_d;
+    double *input_h, *histogram_h, *output_h, *cdf_h, *final_output_h;
+    double *input_d, *histogram_d, *output_d, *cdf_d, *final_output_d;
     int total_bins = 256;
 
     Mat image = imread("demo.png", IMREAD_GRAYSCALE);
@@ -67,6 +67,7 @@ int main(int argc, char* argv[])
     histogram_h = (double *) malloc(sizeof(double) * total_bins);
     output_h = (double *) malloc(sizeof(double) * total_bins);
     cdf_h = (double *) malloc(sizeof(double) * total_bins);
+    final_output_h = (double *) malloc(sizeof(double) * image_size);
 
     cudaMalloc((void **) &input_d, sizeof(double) * image_size);
     cudaMemcpy(input_d, input_h, sizeof(double) * image_size, cudaMemcpyHostToDevice);
@@ -74,9 +75,10 @@ int main(int argc, char* argv[])
     cudaMemset(histogram_d, 0, total_bins * sizeof(double));
     cudaMalloc((void **) &output_d, sizeof(double) * total_bins);
     cudaMalloc((void **) &cdf_d, sizeof(double) * total_bins);
+    cudaMalloc((void **) &final_output_d, sizeof(double) * image_size);
     cudaDeviceSynchronize();
 
-    image_histogram(input_d, image_size, histogram_d, output_d, cdf_d, total_bins);
+    image_histogram(input_d, image_size, histogram_d, output_d, cdf_d, final_output_d, total_bins);
     cuda_ret = cudaDeviceSynchronize();
     if(cuda_ret != cudaSuccess) printf("Unable to launch kernel");
 
@@ -85,32 +87,42 @@ int main(int argc, char* argv[])
     cudaMemcpy(histogram_h, histogram_d, sizeof(double) * total_bins, cudaMemcpyDeviceToHost);
     cudaMemcpy(output_h, output_d, sizeof(double) * total_bins, cudaMemcpyDeviceToHost);
     cudaMemcpy(cdf_h, cdf_d, sizeof(double) * total_bins, cudaMemcpyDeviceToHost);
+    cudaMemcpy(final_output_h, final_output_d, sizeof(double) * total_bins, cudaMemcpyDeviceToHost);
     cout<<"\nImage Histogram Distribution\n"<<endl;
     for(int i = 0; i < total_bins; i++)
     {
         cout<<i<<" - "<<histogram_h[i]<<" - "<<output_h[i]<<" - "<<cdf_h[i]<<endl;
     }
-    // Mat input_image(height, width, CV_8UC1);
-    // for(int i = 0; i < height; i++)
-    // {
-    //     for(int j = 0; j < width; j++)
-    //     {
-    //         input_image.at<uchar>(Point(j, i)) = input_h[i * stride + j];
-    //     }
-    // }
-    // bool in_check = imwrite("input.jpeg", input_image);
-    // if (!in_check)
-    // {
-    //     cout<<"Failed To save input"<<endl;
-    // }
+    Mat input_image(height, width, CV_8UC1);
+    Mat output_image(height, width, CV_8UC1);
+    for(int i = 0; i < height; i++)
+    {
+        for(int j = 0; j < width; j++)
+        {
+            input_image.at<uchar>(Point(j, i)) = input_h[i * stride + j];
+            output_image.at<uchar>(Point(j, i)) = final_output_h[i * stride + j];
+        }
+    }
+    bool in_check = imwrite("input.jpeg", input_image);
+    if (!in_check)
+    {
+        cout<<"Failed To save input"<<endl;
+    }
+    bool out_check = imwrite("output.jpeg", output_image);
+    if (!out_check)
+    {
+        cout<<"Failed To save output"<<endl;
+    }
     // verify(input_h, image_size, histogram_h, total_bins);
     free(input_h);
     free(histogram_h);
     free(output_h);
     free(cdf_h);
+    free(final_output_h);
     cudaFree(input_d);
     cudaFree(histogram_d);
     cudaFree(output_d);
     cudaFree(cdf_d);
+    cudaFree(final_output_d);
     return 0;
 }
