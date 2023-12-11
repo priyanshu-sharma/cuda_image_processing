@@ -45,13 +45,14 @@ __global__ void image_histogram_kernel(double* input, int size, double* histogra
     }
     cdf[ threadIdx.x ] = floorf(COLOR_LEVEL * sum);
     __syncthreads();
-    i = threadIdx.x + blockIdx.x * blockDim.x;
-    stride = blockDim.x * gridDim.x;
-    while ( i < size )
+    if ( threadIdx.x == 0)
     {
-        int value = input[i];
-        final_output[i] = cdf[value];
-        i += stride;
+        int j = 0, equalized_value;
+        while(j<size)
+        {
+            equalized_value = input[i];
+            final_output[i] = cdf[equalized_value];   
+        }
     }
     /*************************************************************************/
 }
