@@ -2,7 +2,7 @@
 # define BLOCK_SIZE 512
 
 
-__global__ void inverted_image_kernel(unsigned int* input, unsigned int* output, unsigned int size)
+__global__ void inverted_image_kernel(int* input, int* output, int size)
 {
 	
     /*************************************************************************/
@@ -16,7 +16,7 @@ __global__ void inverted_image_kernel(unsigned int* input, unsigned int* output,
 }
 
 
-void inverted_image(unsigned int* input, unsigned int* output, unsigned int size) {
+void inverted_image(int* input, int* output, int size) {
 
 	  /*************************************************************************/
     //INSERT CODE HERE
