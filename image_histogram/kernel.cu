@@ -49,8 +49,8 @@ __global__ void image_histogram_kernel(double* input, int size, double* histogra
     stride = blockDim.x * gridDim.x;
     while ( i < size )
     {
-
-        final_output[i] = cdf[input[i]];
+        int value = input[i]
+        final_output[i] = cdf[value];
         i += stride;
     }
     /*************************************************************************/
