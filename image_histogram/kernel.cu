@@ -36,12 +36,14 @@ __global__ void image_histogram_kernel(double* input, int size, double* histogra
     }
     __syncthreads();
     double sum = 0;
-    for ( i = threadIdx.x ; i < total_bins ; i += BLOCK_SIZE )
+    i = 0;
+    while(i < threadIdx.x + 1)
     {
         sum = sum + output[i];
-        cdf[i] = sum;
+        i = i + 1;
     }
-	/*************************************************************************/
+    cdf[ threadIdx.x ] = sum;
+    /*************************************************************************/
 }
 
 
