@@ -45,14 +45,13 @@ __global__ void image_histogram_kernel(double* input, int size, double* histogra
     }
     cdf[ threadIdx.x ] = floorf(COLOR_LEVEL * sum);
     __syncthreads();
-    if ( threadIdx.x == 0)
+    i = threadIdx.x + blockIdx.x * blockDim.x;
+    stride = blockDim.x * gridDim.x;
+    while ( i < size )
     {
-        int j = 0, equalized_value;
-        while(j<size)
-        {
-            equalized_value = input[i];
-            final_output[i] = cdf[equalized_value];   
-        }
+        equalized_value = input[i];
+        final_output[i] = cdf[equalized_value];
+        i += stride;
     }
     /*************************************************************************/
 }
@@ -63,10 +62,10 @@ void image_histogram(double* input, int size, double* histogram, double *output,
 	  /*************************************************************************/
     //INSERT CODE HERE
     int totalBlocks = (size - 1)/BLOCK_SIZE + 1;
-    if ( totalBlocks > MAX_NUMBER_OF_BLOCK )
-    {
-        totalBlocks = MAX_NUMBER_OF_BLOCK;
-    }
+    // if ( totalBlocks > MAX_NUMBER_OF_BLOCK )
+    // {
+    //     totalBlocks = MAX_NUMBER_OF_BLOCK;
+    // }
     dim3 DimGrid(totalBlocks, 1, 1);
     dim3 DimBlock(BLOCK_SIZE, 1, 1);
 
