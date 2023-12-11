@@ -1,6 +1,7 @@
 #include <stdio.h>
 # define BLOCK_SIZE 512
 # define MAX_NUMBER_OF_BLOCK 16
+# define COLOR_LEVEL 255
 
 __global__ void image_histogram_kernel(double* input, int size, double* histogram, double *output, double *cdf, int total_bins)
 {
@@ -42,7 +43,7 @@ __global__ void image_histogram_kernel(double* input, int size, double* histogra
         sum = sum + output[i];
         i = i + 1;
     }
-    cdf[ threadIdx.x ] = sum;
+    cdf[ threadIdx.x ] = COLOR_LEVEL * sum;
     /*************************************************************************/
 }
 
