@@ -7,7 +7,7 @@ __global__ void image_histogram_kernel(double* input, int size, double* histogra
 	
     /*************************************************************************/
     // INSERT KERNEL CODE HERE
-    __shared__ double local_ihisto[256];
+    __shared__ int local_ihisto[256];
     int i, stride;
     for ( i = threadIdx.x ; i < total_bins ; i += BLOCK_SIZE )
     {
@@ -17,11 +17,9 @@ __global__ void image_histogram_kernel(double* input, int size, double* histogra
 
     i = threadIdx.x + blockIdx.x * blockDim.x;
     stride = blockDim.x * gridDim.x;
-    int value;
     while ( i < size )
     {
-        value = input[i];
-        atomicAdd(&(local_ihisto[value]), 1);
+        atomicAdd(&(local_ihisto[input[i]]), 1);
         i += stride;
     }
 
