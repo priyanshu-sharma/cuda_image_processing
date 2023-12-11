@@ -1,6 +1,6 @@
 #include <stdio.h>
 # define BLOCK_SIZE 512
-# define MAX_NUMBER_OF_BLOCK 16
+# define MAX_NUMBER_OF_BLOCK 32
 # define COLOR_LEVEL 255
 
 __global__ void image_histogram_kernel(double* input, int size, double* histogram, double *output, double *cdf, double *final_output, int total_bins)
@@ -62,10 +62,10 @@ void image_histogram(double* input, int size, double* histogram, double *output,
 	  /*************************************************************************/
     //INSERT CODE HERE
     int totalBlocks = (size - 1)/BLOCK_SIZE + 1;
-    // if ( totalBlocks > MAX_NUMBER_OF_BLOCK )
-    // {
-    //     totalBlocks = MAX_NUMBER_OF_BLOCK;
-    // }
+    if ( totalBlocks > MAX_NUMBER_OF_BLOCK )
+    {
+        totalBlocks = MAX_NUMBER_OF_BLOCK;
+    }
     dim3 DimGrid(totalBlocks, 1, 1);
     dim3 DimBlock(BLOCK_SIZE, 1, 1);
 
