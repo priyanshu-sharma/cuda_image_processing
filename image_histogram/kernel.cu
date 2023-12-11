@@ -2,12 +2,12 @@
 # define BLOCK_SIZE 512
 # define MAX_NUMBER_OF_BLOCK 16
 
-__global__ void image_histogram_kernel(unsigned int* input, unsigned int size, unsigned int* histogram, unsigned int total_bins)
+__global__ void image_histogram_kernel(double* input, int size, double* histogram, int total_bins)
 {
 	
     /*************************************************************************/
     // INSERT KERNEL CODE HERE
-    __shared__ unsigned int local_ihisto[256];
+    __shared__ double local_ihisto[256];
     int i, stride;
     for ( i = threadIdx.x ; i < total_bins ; i += BLOCK_SIZE )
     {
@@ -32,7 +32,7 @@ __global__ void image_histogram_kernel(unsigned int* input, unsigned int size, u
 }
 
 
-void image_histogram(unsigned int* input, unsigned int size, unsigned int* histogram, unsigned int total_bins) {
+void image_histogram(double* input, int size, double* histogram, int total_bins) {
 
 	  /*************************************************************************/
     //INSERT CODE HERE
