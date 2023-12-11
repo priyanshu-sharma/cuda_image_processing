@@ -29,6 +29,11 @@ __global__ void image_histogram_kernel(double* input, int size, double* histogra
     {
         atomicAdd(&(histogram[i]), local_ihisto[i]);
     }
+    __syncthreads();
+    for ( i = threadIdx.x ; i < total_bins ; i += BLOCK_SIZE )
+    {
+        histogram[i] = histogram[i]/size;
+    }
 	/*************************************************************************/
 }
 
