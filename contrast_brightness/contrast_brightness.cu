@@ -20,20 +20,20 @@ int main(int argc, char* argv[])
     unsigned char *myData = (unsigned char*)image.data;
     int width = image.cols;
     int height = image.rows;
-    int _stride = image.step;
+    int stride = image.step;
     unsigned int image_size = width * height;
     cout<<"Image Size="<<image_size<<endl;
     cout<<"Width="<<unsigned(width)<<endl;
     cout<<"Height="<<unsigned(height)<<endl;
-    cout<<"Stride="<<unsigned(_stride)<<endl;
+    cout<<"Stride="<<unsigned(stride)<<endl;
 
     input_h = (double *) malloc(sizeof(double) * image_size);
     for(int i = 0; i < height; i++)
     {
         for(int j = 0; j < width; j++)
         {
-            unsigned char val = myData[ i * _stride + j];
-            input_h[i * _stride + j] = int(val);
+            unsigned char val = myData[ i * stride + j];
+            input_h[i * stride + j] = int(val);
         }
     }
     output_h = (double *) malloc(sizeof(double) * image_size);
@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
     cudaMalloc((void **) &output_d, sizeof(double) * image_size);
     cudaDeviceSynchronize();
 
-    scaling(input_d, output_d, image_size);
+    contrast_brightness(input_d, output_d, image_size);
     cuda_ret = cudaDeviceSynchronize();
     if(cuda_ret != cudaSuccess) printf("Unable to launch kernel");
 
