@@ -7,7 +7,7 @@ __global__ void inverse_log_kernel(double* input, double* output, double size)
     /*************************************************************************/
     // INSERT KERNEL CODE HERE
     int i = threadIdx.x + blockDim.x * blockIdx.x;
-    double c = 255 / log10f(256);
+    double c = log10f(256)/255;
     if (i < size)
     {
         output[i] = powf(10, c * input[i]) - 1;
