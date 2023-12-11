@@ -6,13 +6,13 @@ else
 NVCC_FLAGS  = -O3 `pkg-config --libs --cflags opencv`
 endif
 LD_FLAGS    = -lcudart `pkg-config --libs --cflags opencv`
-EXE	        = starter
-OBJ	        = starter.o
+EXE	        = contrast_brightness
+OBJ	        = contrast_brightness.o
 
 default: $(EXE)
 
-starter.o: starter.cu kernel.cu
-	$(NVCC) -c -o $@ starter.cu $(NVCC_FLAGS)
+contrast_brightness.o: contrast_brightness.cu kernel.cu
+	$(NVCC) -c -o $@ contrast_brightness.cu $(NVCC_FLAGS)
 
 $(EXE): $(OBJ)
 	$(NVCC) $(OBJ) -o $(EXE) $(LD_FLAGS)
