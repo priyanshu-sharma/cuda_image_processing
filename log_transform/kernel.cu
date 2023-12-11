@@ -7,10 +7,12 @@ __global__ void log_transformation_kernel(double* input, double* output, double 
     /*************************************************************************/
     // INSERT KERNEL CODE HERE
     int i = threadIdx.x + blockDim.x * blockIdx.x;
-    double c = 255 / (log10f(256)/log10f(10));
+    printf("Double");
+    printf(log10f(256));
+    double c = 255 / log10f(256);
     if (i < size)
     {
-        output[i] = c * log(1 + input[i]);
+        output[i] = c * log10f(1 + input[i]);
     }
 	/*************************************************************************/
 }
