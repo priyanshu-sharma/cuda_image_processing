@@ -48,4 +48,6 @@ int main()
     cudaFree(output_d);
 
     return 0;
+
+    
 }
