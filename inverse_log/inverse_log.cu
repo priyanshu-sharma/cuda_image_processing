@@ -33,7 +33,7 @@ void verify(double* input_h, double* output_h, double size)
     double c = 255/log10(256);
     for(int i = 0; i < size; i++)
     {
-        test_output[i] = c * log(1 + input[i])
+        test_output[i] = pow(10, c * input_h[i]) - 1;
     }
     int count = 0;
     for(int i = 0; i < size; i++)
