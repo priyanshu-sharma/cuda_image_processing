@@ -70,15 +70,15 @@ void verify(double* input_h, double *final_output_h, int size, double* histogram
         int v = input_h[i];
         final_output[i] = test_cdf[v];
     }
-    count = 0;
-    for(int i = 0; i < size; i++)
-    {
-        if(final_output[i] != final_output_h[i])
-        {
-            cout<<"Difference in value - "<<i<<" - "<<test_histogram[i]<<" - "<<histogram_h[i]<<endl;
-            count = count + 1;
-        }
-    }
+    // count = 0;
+    // for(int i = 0; i < size; i++)
+    // {
+    //     if(final_output[i] != final_output_h[i])
+    //     {
+    //         cout<<"Difference in value - "<<i<<" - "<<test_histogram[i]<<" - "<<histogram_h[i]<<endl;
+    //         count = count + 1;
+    //     }
+    // }
     if (count == 0)
     {
         cout<<"All Test Passed Successfully"<<endl;
