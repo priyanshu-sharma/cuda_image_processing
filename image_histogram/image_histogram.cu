@@ -87,11 +87,11 @@ int main(int argc, char* argv[])
     cout<<"Start Time - "<<start<<endl;
 
     image_histogram(input_d, image_size, histogram_d, output_d, cdf_d, final_output_d, total_bins);
+    cuda_ret = cudaDeviceSynchronize();
+    if(cuda_ret != cudaSuccess) printf("Unable to launch kernel");
     time_t end = time(0);
     cout<<"End Time - "<<end<<endl;
     cout<<"\nTotal Time - "<<end-start<<endl;
-    cuda_ret = cudaDeviceSynchronize();
-    if(cuda_ret != cudaSuccess) printf("Unable to launch kernel");
 
     // Copy device variables from host ----------------------------------------
     printf("Copying data from device to host..."); fflush(stdout);
