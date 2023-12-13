@@ -2,7 +2,7 @@
 #include <stdint.h>
 #include <opencv2/opencv.hpp>
 #include <iostream>
-#include <vector>
+#include <ctime>
 #include "kernel.cu"
 using namespace cv;
 using namespace std;
@@ -40,6 +40,7 @@ int main(int argc, char* argv[])
     double *input_h, *histogram_h, *output_h, *cdf_h, *final_output_h, *ff;
     double *input_d, *histogram_d, *output_d, *cdf_d, *final_output_d;
     int total_bins = 256;
+    printf("\nReading the input image..."); fflush(stdout);
 
     Mat image = imread("demo.png", IMREAD_GRAYSCALE);
     if (!image.data) { 
@@ -64,6 +65,8 @@ int main(int argc, char* argv[])
             input_h[i * stride + j] = int(val);
         }
     }
+    // Copy host variables to device ------------------------------------------
+    printf("\nCopying data from host to device..."); fflush(stdout);
     histogram_h = (double *) malloc(sizeof(double) * total_bins);
     output_h = (double *) malloc(sizeof(double) * total_bins);
     cdf_h = (double *) malloc(sizeof(double) * total_bins);
@@ -78,8 +81,15 @@ int main(int argc, char* argv[])
     cudaMalloc((void **) &cdf_d, sizeof(double) * total_bins);
     cudaMalloc((void **) &final_output_d, sizeof(double) * image_size);
     cudaDeviceSynchronize();
+    // Launch kernel using standard mat-add interface ---------------------------
+    printf("\nLaunching kernel..."); fflush(stdout);
+    time_t start = time(0);
+    cout<<"Start Time - "<<start<<endl;
 
     image_histogram(input_d, image_size, histogram_d, output_d, cdf_d, final_output_d, total_bins);
+    time_t end = time(0);
+    cout<<"End Time - "<<end<<endl;
+    cout<<"\nTotal Time - "<<end-start<<endl;
     cuda_ret = cudaDeviceSynchronize();
     if(cuda_ret != cudaSuccess) printf("Unable to launch kernel");
 
@@ -100,6 +110,7 @@ int main(int argc, char* argv[])
         ff[i] = cdf_h[finalv];
 
     }
+    printf("\nSaving the output..."); fflush(stdout);
     Mat input_image(height, width, CV_8UC1);
     Mat output_image(height, width, CV_8UC1);
     Mat ff_im(height, width, CV_8UC1);

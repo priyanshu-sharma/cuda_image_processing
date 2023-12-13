@@ -2,7 +2,7 @@
 #include <stdint.h>
 #include <opencv2/opencv.hpp>
 #include <iostream>
-#include <vector>
+#include <ctime>
 #include "kernel.cu"
 using namespace cv;
 using namespace std;
@@ -36,6 +36,7 @@ int main(int argc, char* argv[])
     cudaError_t cuda_ret;
     double *input_h, *output_h;
     double *input_d, *output_d;
+    printf("\nReading the input image..."); fflush(stdout);
 
     Mat image = imread("demo.png", IMREAD_GRAYSCALE);
     if (!image.data) { 
@@ -61,14 +62,23 @@ int main(int argc, char* argv[])
             input_h[i * stride + j] = int(val);
         }
     }
+    // Copy host variables to device ------------------------------------------
+    printf("\nCopying data from host to device..."); fflush(stdout);
     output_h = (double *) malloc(sizeof(double) * image_size);
 
     cudaMalloc((void **) &input_d, sizeof(double) * image_size);
     cudaMemcpy(input_d, input_h, sizeof(double) * image_size, cudaMemcpyHostToDevice);
     cudaMalloc((void **) &output_d, sizeof(double) * image_size);
     cudaDeviceSynchronize();
+    // Launch kernel using standard mat-add interface ---------------------------
+    printf("\nLaunching kernel..."); fflush(stdout);
+    time_t start = time(0);
+    cout<<"Start Time - "<<start<<endl;
 
     inverse_log(input_d, output_d, image_size);
+    time_t end = time(0);
+    cout<<"End Time - "<<end<<endl;
+    cout<<"\nTotal Time - "<<end-start<<endl;
     cuda_ret = cudaDeviceSynchronize();
     if(cuda_ret != cudaSuccess) printf("Unable to launch kernel");
 
@@ -76,6 +86,7 @@ int main(int argc, char* argv[])
     printf("Copying data from device to host..."); fflush(stdout);
     cudaMemcpy(output_h, output_d, sizeof(double) * image_size, cudaMemcpyDeviceToHost);
     // verify(input_h, output_h, image_size);
+    printf("\nSaving the output..."); fflush(stdout);
     Mat input_image(height, width, CV_8UC1);
     Mat output_image(height, width, CV_8UC1);
     for(int i = 0; i < height; i++)

@@ -11,7 +11,6 @@ using namespace std;
 int main(int argc, char* argv[])
 {
     cudaError_t cuda_ret;
-    // Timer timer;
     double *input_h, *output_h;
     double *input_d, *output_d;
 
@@ -52,10 +51,12 @@ int main(int argc, char* argv[])
     // Launch kernel using standard mat-add interface ---------------------------
     printf("\nLaunching kernel..."); fflush(stdout);
     time_t start = time(0);
+    cout<<"Start Time - "<<start<<endl;
 
     contrast_brightness(input_d, output_d, image_size);
     time_t end = time(0);
-    cout<<"\nTotal Time - "<<end<<" - "<<start<<" - "<<end-start<<endl;
+    cout<<"End Time - "<<end<<endl;
+    cout<<"\nTotal Time - "<<end-start<<endl;
     cuda_ret = cudaDeviceSynchronize();
     if(cuda_ret != cudaSuccess) printf("Unable to launch kernel");
 
