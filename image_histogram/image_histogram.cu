@@ -27,7 +27,7 @@ float elapsedTime(Timer timer) {
                 + (timer.endTime.tv_usec - timer.startTime.tv_usec)/1.0e6));
 }
 
-void verify(double* input_h, souble *final_output_h, int size, double* histogram_h, int total_bins)
+void verify(double* input_h, double *final_output_h, int size, double* histogram_h, int total_bins)
 {
     double *test_histogram = (double *) malloc(sizeof(double) * total_bins);
     double *test_cdf = (double *) malloc(sizeof(double) * total_bins);
@@ -38,7 +38,8 @@ void verify(double* input_h, souble *final_output_h, int size, double* histogram
     }
     for(int i = 0; i < size; i++)
     {
-        test_histogram[input_h[i]] = test_histogram[input_h[i]] + 1;
+        int v = input_h[i];
+        test_histogram[v] = test_histogram[v] + 1;
     }
     int count = 0;
     for(int i = 0; i < total_bins; i++)
@@ -66,9 +67,10 @@ void verify(double* input_h, souble *final_output_h, int size, double* histogram
     double *final_output = (double *) malloc(sizeof(double) * size);
     for(int i = 0; i < size; i++)
     {
-        final_output[i] = test_cdf[input_h[i]];
+        int v = input_h[i];
+        final_output[i] = test_cdf[v];
     }
-    int count = 0;
+    count = 0;
     for(int i = 0; i < size; i++)
     {
         if(final_output[i] != final_output_h[i])
