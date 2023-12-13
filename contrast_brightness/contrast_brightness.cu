@@ -9,7 +9,6 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-    Timer timer;
     cudaError_t cuda_ret;
     time_t start, end;
     double *input_h, *output_h;
