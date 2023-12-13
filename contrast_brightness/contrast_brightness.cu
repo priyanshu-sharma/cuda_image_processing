@@ -29,10 +29,10 @@ float elapsedTime(Timer timer) {
 
 int main(int argc, char* argv[])
 {
+    Timer timer;
     cudaError_t cuda_ret;
     double *input_h, *output_h;
     double *input_d, *output_d;
-    Timer timer;
 
     printf("\nReading the input image..."); fflush(stdout);
 
