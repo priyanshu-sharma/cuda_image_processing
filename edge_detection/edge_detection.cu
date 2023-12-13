@@ -1,41 +1,54 @@
 // main.cu
 #include <iostream>
 #include <opencv2/opencv.hpp>
+// kernel.cu
+#include <cuda_runtime.h>
+#include <uchar.h> 
 
-int main() {
-    cv::Mat inputImage = cv::imread("input.jpg", cv::IMREAD_GRAYSCALE);
+#include <cuda_runtime.h>
+#include <opencv2/opencv.hpp>
+#include <iostream>
+ 
 
-    if (inputImage.empty()) {
-        std::cerr << "Error: Could not read the image." << std::endl;
+int main()
+{
+    // Load image using OpenCV
+    cv::Mat image = cv::imread("demo.png", cv::IMREAD_GRAYSCALE);
+
+    if (image.empty()) {
+        std::cerr << "Could not open or find the image." << std::endl;
         return -1;
     }
 
-    int width = inputImage.cols;
-    int height = inputImage.rows;
+    // Get image parameters
+    int width = image.cols;
+    int height = image.rows;
 
-    size_t imageSize = width * height * sizeof(uchar);
+    // Allocate memory for input and output images
+    unsigned char* input_h = image.data;
+    unsigned char* output_h = (unsigned char*)malloc(sizeof(unsigned char) * width * height);
 
-    uchar *d_inputImage, *d_outputImage;
+    unsigned char *input_d, *output_d;
+    cudaMalloc((void**)&input_d, sizeof(unsigned char) * width * height);
+    cudaMalloc((void**)&output_d, sizeof(unsigned char) * width * height);
 
-    cudaMalloc(&d_inputImage, imageSize);
-    cudaMalloc(&d_outputImage, imageSize);
+    // Copy input image data to device
+    cudaMemcpy(input_d, input_h, sizeof(unsigned char) * width * height, cudaMemcpyHostToDevice);
 
-    cudaMemcpy(d_inputImage, inputImage.data, imageSize, cudaMemcpyHostToDevice);
+    // Perform edge detection
+    edgeDetection(input_d, output_d, width, height);
 
-    dim3 blockSize(16, 16);
-    dim3 gridSize((width + blockSize.x - 1) / blockSize.x, (height + blockSize.y - 1) / blockSize.y);
+    // Copy result back to host
+    cudaMemcpy(output_h, output_d, sizeof(unsigned char) * width * height, cudaMemcpyDeviceToHost);
 
-    sobelEdgeDetection<<<gridSize, blockSize>>>(d_inputImage, d_outputImage, width, height);
+    // Save the input and output images
+    cv::imwrite("input_image.jpg", image);
+    cv::imwrite("output_edge_detected.jpg", cv::Mat(height, width, CV_8UC1, output_h));
 
-    uchar *outputImage = new uchar[imageSize];
-    cudaMemcpy(outputImage, d_outputImage, imageSize, cudaMemcpyDeviceToHost);
-
-    cv::Mat outputMat(height, width, CV_8U, outputImage);
-    cv::imwrite("output.jpg", outputMat);
-
-    cudaFree(d_inputImage);
-    cudaFree(d_outputImage);
-    delete[] outputImage;
+    // Free allocated memory
+    free(output_h);
+    cudaFree(input_d);
+    cudaFree(output_d);
 
     return 0;
 }
