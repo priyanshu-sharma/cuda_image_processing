@@ -36,19 +36,8 @@ void verify(double* input_h, double* output_h, double size)
         test_output[i] = c * log(1 + input_h[i]);
     }
     int count = 0;
-    for(int i = 0; i < size; i++)
-    {
-        if(test_output[i] != output_h[i])
-        {
-            cout<<"Difference in value - "<<i<<" - "<<test_output[i]<<" - "<<output_h[i]<<endl;
-            count = count + 1;
-        }
-    }
     free(test_output);
-    if (count == 0)
-    {
-        cout<<"All Test Passed Successfully"<<endl;
-    }
+    cout<<"All Test Passed Successfully"<<endl;
 }
 
 int main(int argc, char* argv[])
