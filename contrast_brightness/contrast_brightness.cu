@@ -6,6 +6,7 @@
 #include "kernel.cu"
 #include <sys/time.h>
 
+cudaError_t cuda_ret;
 typedef struct {
     struct timeval startTime;
     struct timeval endTime;
@@ -30,7 +31,6 @@ float elapsedTime(Timer timer) {
 int main(int argc, char* argv[])
 {
     Timer timer;
-    cudaError_t cuda_ret;
     double *input_h, *output_h;
     double *input_d, *output_d;
 
