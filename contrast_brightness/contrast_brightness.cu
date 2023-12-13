@@ -4,13 +4,15 @@
 #include <iostream>
 #include <bits/stdc++.h> 
 #include "kernel.cu"
+#include "support.h"
+
 using namespace cv;
 using namespace std;
 
 int main(int argc, char* argv[])
 {
     cudaError_t cuda_ret;
-    time_t start, end;
+    Timer timer;
     double *input_h, *output_h;
     double *input_d, *output_d;
 
@@ -18,7 +20,7 @@ int main(int argc, char* argv[])
 
     Mat image = imread("demo.png", IMREAD_GRAYSCALE);
     if (!image.data) { 
-        printf("No image data \n");  
+        printf("\nNo image data \n");  
     }
     unsigned char *myData = (unsigned char*)image.data;
     int width = image.cols;
@@ -40,7 +42,7 @@ int main(int argc, char* argv[])
         }
     }
     // Copy host variables to device ------------------------------------------
-    printf("Copying data from host to device..."); fflush(stdout);
+    printf("\nCopying data from host to device..."); fflush(stdout);
     output_h = (double *) malloc(sizeof(double) * image_size);
 
     cudaMalloc((void **) &input_d, sizeof(double) * image_size);
@@ -49,20 +51,19 @@ int main(int argc, char* argv[])
     cudaDeviceSynchronize();
 
     // Launch kernel using standard mat-add interface ---------------------------
-    printf("Launching kernel..."); fflush(stdout);
-    time(&start);
+    printf("\nLaunching kernel..."); fflush(stdout);
+    startTime(&timer);
+
     contrast_brightness(input_d, output_d, image_size);
-    time(&end); 
-    double time_taken = double(end - start);
-    cout << "Time taken by program is : " << time_taken << setprecision(5) << " sec " <<endl;
+    stopTime(&timer); printf("%f s\n", elapsedTime(timer));
     cuda_ret = cudaDeviceSynchronize();
     if(cuda_ret != cudaSuccess) printf("Unable to launch kernel");
 
 
     // Copy device variables from host ----------------------------------------
-    printf("Copying data from device to host..."); fflush(stdout);
+    printf("\nCopying data from device to host..."); fflush(stdout);
     cudaMemcpy(output_h, output_d, sizeof(double) * image_size, cudaMemcpyDeviceToHost);
-    printf("Saving the output..."); fflush(stdout);
+    printf("\nSaving the output..."); fflush(stdout);
     Mat input_image(height, width, CV_8UC1);
     Mat output_image(height, width, CV_8UC1);
     for(int i = 0; i < height; i++)
