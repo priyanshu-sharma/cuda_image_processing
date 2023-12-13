@@ -2,16 +2,16 @@
 #include <stdint.h>
 #include <opencv2/opencv.hpp>
 #include <iostream>
-#include <chrono>
+#include <bits/stdc++.h> 
 #include "kernel.cu"
 using namespace cv;
 using namespace std;
-using namespace std::chrono;
 
 int main(int argc, char* argv[])
 {
     Timer timer;
     cudaError_t cuda_ret;
+    time_t start, end;
     double *input_h, *output_h;
     double *input_d, *output_d;
 
@@ -51,12 +51,11 @@ int main(int argc, char* argv[])
 
     // Launch kernel using standard mat-add interface ---------------------------
     printf("Launching kernel..."); fflush(stdout);
-    auto start = high_resolution_clock::now();
-
+    time(&start);
     contrast_brightness(input_d, output_d, image_size);
-    auto stop = high_resolution_clock::now();
-    auto duration = duration_cast<microseconds>(stop - start);
-    cout << duration.count() << endl;
+    time(&end); 
+    double time_taken = double(end - start);
+    cout << "Time taken by program is : " << time_taken << setprecision(5) << " sec " <<endl;
     cuda_ret = cudaDeviceSynchronize();
     if(cuda_ret != cudaSuccess) printf("Unable to launch kernel");
 
