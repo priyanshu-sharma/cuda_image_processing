@@ -30,10 +30,16 @@ float elapsedTime(Timer timer) {
 void verify(double* input_h, double* output_h, double size)
 {
     double *test_output = (double *) malloc(sizeof(double) * size);
-    double c = 255/log10(256);
     for(int i = 0; i < size; i++)
     {
-        test_output[i] = c * log(1 + input[i])
+        if (input_h[i] < 128)
+        {
+            test_output[i] = 0;
+        }
+        else
+        {
+            test_output[i] = 255;
+        }
     }
     int count = 0;
     for(int i = 0; i < size; i++)
