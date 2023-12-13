@@ -27,29 +27,29 @@ float elapsedTime(Timer timer) {
                 + (timer.endTime.tv_usec - timer.startTime.tv_usec)/1.0e6));
 }
 
-// void verify(double* input_h, double* output_h, double size)
-// {
-//     double *test_output = (double *) malloc(sizeof(double) * size);
-//     double c = 255/log10(256);
-//     for(int i = 0; i < size; i++)
-//     {
-//         test_output[i] = c * log(1 + input[i])
-//     }
-//     int count = 0;
-//     for(int i = 0; i < size; i++)
-//     {
-//         if(test_output[i] != output_h[i])
-//         {
-//             cout<<"Difference in value - "<<i<<" - "<<test_output[i]<<" - "<<output_h[i]<<endl;
-//             count = count + 1;
-//         }
-//     }
-//     free(test_output);
-//     if (count == 0)
-//     {
-//         cout<<"All Test Passed Successfully"<<endl;
-//     }
-// }
+void verify(double* input_h, double* output_h, double size)
+{
+    double *test_output = (double *) malloc(sizeof(double) * size);
+    double c = 255/log10(256);
+    for(int i = 0; i < size; i++)
+    {
+        test_output[i] = c * log(1 + input[i])
+    }
+    int count = 0;
+    for(int i = 0; i < size; i++)
+    {
+        if(test_output[i] != output_h[i])
+        {
+            cout<<"Difference in value - "<<i<<" - "<<test_output[i]<<" - "<<output_h[i]<<endl;
+            count = count + 1;
+        }
+    }
+    free(test_output);
+    if (count == 0)
+    {
+        cout<<"All Test Passed Successfully"<<endl;
+    }
+}
 
 int main(int argc, char* argv[])
 {
@@ -108,7 +108,10 @@ int main(int argc, char* argv[])
     startTime(&timer);
     cudaMemcpy(output_h, output_d, sizeof(double) * image_size, cudaMemcpyDeviceToHost);
     stopTime(&timer); printf("%f s\n", elapsedTime(timer));
-    // verify(input_h, output_h, image_size);
+    printf("\nVerifying on CPU..."); fflush(stdout);
+    startTime(&timer);
+    verify(input_h, output_h, image_size);
+    stopTime(&timer); printf("%f s\n", elapsedTime(timer));
     printf("\nSaving the output..."); fflush(stdout);
     startTime(&timer);
     Mat input_image(height, width, CV_8UC1);

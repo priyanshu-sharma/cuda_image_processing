@@ -105,11 +105,14 @@ int main(int argc, char* argv[])
     stopTime(&timer); printf("%f s\n", elapsedTime(timer));
 
     // Copy device variables from host ----------------------------------------
-    printf("Copying data from device to host..."); fflush(stdout);
+    printf("\nCopying data from device to host..."); fflush(stdout);
     startTime(&timer);
     cudaMemcpy(output_h, output_d, sizeof(int) * image_size, cudaMemcpyDeviceToHost);
     stopTime(&timer); printf("%f s\n", elapsedTime(timer));
+    printf("\nVerifying on CPU..."); fflush(stdout);
+    startTime(&timer);
     verify(input_h, output_h, image_size);
+    stopTime(&timer); printf("%f s\n", elapsedTime(timer));
     printf("\nSaving the output..."); fflush(stdout);
     startTime(&timer);
     Mat input_image(height, width, CV_8UC1);
