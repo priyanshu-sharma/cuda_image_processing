@@ -1,11 +1,31 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <opencv2/opencv.hpp>
 #include <iostream>
-#include <ctime>
+#include <sys/time.h>
 #include "kernel.cu"
 using namespace cv;
 using namespace std;
+
+cudaError_t cuda_ret;
+typedef struct {
+    struct timeval startTime;
+    struct timeval endTime;
+} Timer;
+
+void startTime(Timer* timer) {
+    gettimeofday(&(timer->startTime), NULL);
+}
+
+void stopTime(Timer* timer) {
+    gettimeofday(&(timer->endTime), NULL);
+}
+
+float elapsedTime(Timer timer) {
+    return ((float) ((timer.endTime.tv_sec - timer.startTime.tv_sec) \
+                + (timer.endTime.tv_usec - timer.startTime.tv_usec)/1.0e6));
+}
 
 // void verify(double* input_h, double* output_h, double size)
 // {
@@ -33,10 +53,11 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-    cudaError_t cuda_ret;
+    Timer timer;
     double *input_h, *output_h;
     double *input_d, *output_d;
     printf("\nReading the input image..."); fflush(stdout);
+    startTime(&timer);
 
     Mat image = imread("demo.png", IMREAD_GRAYSCALE);
     if (!image.data) { 
@@ -62,31 +83,34 @@ int main(int argc, char* argv[])
             input_h[i * stride + j] = int(val);
         }
     }
+    stopTime(&timer); printf("%f s\n", elapsedTime(timer));
     // Copy host variables to device ------------------------------------------
     printf("\nCopying data from host to device..."); fflush(stdout);
+    startTime(&timer);
     output_h = (double *) malloc(sizeof(double) * image_size);
 
     cudaMalloc((void **) &input_d, sizeof(double) * image_size);
     cudaMemcpy(input_d, input_h, sizeof(double) * image_size, cudaMemcpyHostToDevice);
     cudaMalloc((void **) &output_d, sizeof(double) * image_size);
     cudaDeviceSynchronize();
+    stopTime(&timer); printf("%f s\n", elapsedTime(timer));
     // Launch kernel using standard mat-add interface ---------------------------
     printf("\nLaunching kernel..."); fflush(stdout);
-    time_t start = time(0);
-    cout<<"Start Time - "<<start<<endl;
+    startTime(&timer);
 
     log_transformation(input_d, output_d, image_size);
     cuda_ret = cudaDeviceSynchronize();
     if(cuda_ret != cudaSuccess) printf("Unable to launch kernel");
-    time_t end = time(0);
-    cout<<"End Time - "<<end<<endl;
-    cout<<"\nTotal Time - "<<end-start<<endl;
+    stopTime(&timer); printf("%f s\n", elapsedTime(timer));
 
     // Copy device variables from host ----------------------------------------
     printf("Copying data from device to host..."); fflush(stdout);
+    startTime(&timer);
     cudaMemcpy(output_h, output_d, sizeof(double) * image_size, cudaMemcpyDeviceToHost);
+    stopTime(&timer); printf("%f s\n", elapsedTime(timer));
     // verify(input_h, output_h, image_size);
     printf("\nSaving the output..."); fflush(stdout);
+    startTime(&timer);
     Mat input_image(height, width, CV_8UC1);
     Mat output_image(height, width, CV_8UC1);
     for(int i = 0; i < height; i++)
@@ -107,6 +131,7 @@ int main(int argc, char* argv[])
     {
         cout<<"Failed To save output"<<endl;
     }
+    stopTime(&timer); printf("%f s\n", elapsedTime(timer));
     free(input_h);
     free(output_h);
     cudaFree(input_d);

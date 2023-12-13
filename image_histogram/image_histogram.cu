@@ -2,10 +2,30 @@
 #include <stdint.h>
 #include <opencv2/opencv.hpp>
 #include <iostream>
-#include <ctime>
+#include <stdlib.h>
+#include <sys/time.h>
 #include "kernel.cu"
 using namespace cv;
 using namespace std;
+
+cudaError_t cuda_ret;
+typedef struct {
+    struct timeval startTime;
+    struct timeval endTime;
+} Timer;
+
+void startTime(Timer* timer) {
+    gettimeofday(&(timer->startTime), NULL);
+}
+
+void stopTime(Timer* timer) {
+    gettimeofday(&(timer->endTime), NULL);
+}
+
+float elapsedTime(Timer timer) {
+    return ((float) ((timer.endTime.tv_sec - timer.startTime.tv_sec) \
+                + (timer.endTime.tv_usec - timer.startTime.tv_usec)/1.0e6));
+}
 
 // void verify(unsigned int* input_h, unsigned size, unsigned int* histogram_h, unsigned int total_bins)
 // {
@@ -36,11 +56,12 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-    cudaError_t cuda_ret;
+    Timer timer;
     double *input_h, *histogram_h, *output_h, *cdf_h, *final_output_h, *ff;
     double *input_d, *histogram_d, *output_d, *cdf_d, *final_output_d;
     int total_bins = 256;
     printf("\nReading the input image..."); fflush(stdout);
+    startTime(&timer);
 
     Mat image = imread("demo.png", IMREAD_GRAYSCALE);
     if (!image.data) { 
@@ -65,8 +86,10 @@ int main(int argc, char* argv[])
             input_h[i * stride + j] = int(val);
         }
     }
+    stopTime(&timer); printf("%f s\n", elapsedTime(timer));
     // Copy host variables to device ------------------------------------------
     printf("\nCopying data from host to device..."); fflush(stdout);
+    startTime(&timer);
     histogram_h = (double *) malloc(sizeof(double) * total_bins);
     output_h = (double *) malloc(sizeof(double) * total_bins);
     cdf_h = (double *) malloc(sizeof(double) * total_bins);
@@ -81,24 +104,23 @@ int main(int argc, char* argv[])
     cudaMalloc((void **) &cdf_d, sizeof(double) * total_bins);
     cudaMalloc((void **) &final_output_d, sizeof(double) * image_size);
     cudaDeviceSynchronize();
+    stopTime(&timer); printf("%f s\n", elapsedTime(timer));
     // Launch kernel using standard mat-add interface ---------------------------
     printf("\nLaunching kernel..."); fflush(stdout);
-    time_t start = time(0);
-    cout<<"Start Time - "<<start<<endl;
+    startTime(&timer);
 
     image_histogram(input_d, image_size, histogram_d, output_d, cdf_d, final_output_d, total_bins);
     cuda_ret = cudaDeviceSynchronize();
     if(cuda_ret != cudaSuccess) printf("Unable to launch kernel");
-    time_t end = time(0);
-    cout<<"End Time - "<<end<<endl;
-    cout<<"\nTotal Time - "<<end-start<<endl;
-
+    stopTime(&timer); printf("%f s\n", elapsedTime(timer));
     // Copy device variables from host ----------------------------------------
     printf("Copying data from device to host..."); fflush(stdout);
+    startTime(&timer);
     cudaMemcpy(histogram_h, histogram_d, sizeof(double) * total_bins, cudaMemcpyDeviceToHost);
     cudaMemcpy(output_h, output_d, sizeof(double) * total_bins, cudaMemcpyDeviceToHost);
     cudaMemcpy(cdf_h, cdf_d, sizeof(double) * total_bins, cudaMemcpyDeviceToHost);
     cudaMemcpy(final_output_h, final_output_d, sizeof(double) * image_size, cudaMemcpyDeviceToHost);
+    stopTime(&timer); printf("%f s\n", elapsedTime(timer));
     cout<<"\nImage Histogram Distribution\n"<<endl;
     for(int i = 0; i < total_bins; i++)
     {
@@ -111,6 +133,7 @@ int main(int argc, char* argv[])
 
     }
     printf("\nSaving the output..."); fflush(stdout);
+    startTime(&timer);
     Mat input_image(height, width, CV_8UC1);
     Mat output_image(height, width, CV_8UC1);
     Mat ff_im(height, width, CV_8UC1);
@@ -138,6 +161,7 @@ int main(int argc, char* argv[])
     {
         cout<<"Failed To save ff"<<endl;
     }
+    stopTime(&timer); printf("%f s\n", elapsedTime(timer));
     // verify(input_h, image_size, histogram_h, total_bins);
     free(input_h);
     free(histogram_h);
