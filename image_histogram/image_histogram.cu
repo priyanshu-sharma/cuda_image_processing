@@ -27,32 +27,62 @@ float elapsedTime(Timer timer) {
                 + (timer.endTime.tv_usec - timer.startTime.tv_usec)/1.0e6));
 }
 
-// void verify(unsigned int* input_h, unsigned size, unsigned int* histogram_h, unsigned int total_bins)
-// {
-//     unsigned int *test_histogram = (unsigned int *) malloc(sizeof(unsigned int) * total_bins);
-//     for(int i = 0; i < total_bins; i++)
-//     {
-//         test_histogram[i] = 0;
-//     }
-//     for(int i = 0; i < size; i++)
-//     {
-//         test_histogram[input_h[i]] = test_histogram[input_h[i]] + 1;
-//     }
-//     unsigned int count = 0;
-//     for(int i = 0; i < total_bins; i++)
-//     {
-//         if(test_histogram[i] != histogram_h[i])
-//         {
-//             cout<<"Difference in value - "<<i<<" - "<<test_histogram[i]<<" - "<<histogram_h[i]<<endl;
-//             count = count + 1;
-//         }
-//     }
-//     free(test_histogram);
-//     if (count == 0)
-//     {
-//         cout<<"All Test Passed Successfully"<<endl;
-//     }
-// }
+void verify(double* input_h, souble *final_output_h, int size, double* histogram_h, int total_bins)
+{
+    double *test_histogram = (double *) malloc(sizeof(double) * total_bins);
+    double *test_cdf = (double *) malloc(sizeof(double) * total_bins);
+    for(int i = 0; i < total_bins; i++)
+    {
+        test_histogram[i] = 0;
+        test_cdf[i] = 0;
+    }
+    for(int i = 0; i < size; i++)
+    {
+        test_histogram[input_h[i]] = test_histogram[input_h[i]] + 1;
+    }
+    int count = 0;
+    for(int i = 0; i < total_bins; i++)
+    {
+        if(test_histogram[i] != histogram_h[i])
+        {
+            cout<<"Difference in value - "<<i<<" - "<<test_histogram[i]<<" - "<<histogram_h[i]<<endl;
+            count = count + 1;
+        }
+    }
+    if (count == 0)
+    {
+        cout<<"All Test Passed Successfully"<<endl;
+    }
+    for(int i = 0; i < total_bins; i++)
+    {
+        test_histogram[i] = test_histogram[i]/255;
+    }
+    double sum = 0;
+    for(int i = 0; i < total_bins; i++)
+    {
+        sum = sum + test_histogram[i];
+        test_cdf[i] = int(sum * 255);
+    }
+    double *final_output = (double *) malloc(sizeof(double) * size);
+    for(int i = 0; i < size; i++)
+    {
+        final_output[i] = test_cdf[input_h[i]];
+    }
+    int count = 0;
+    for(int i = 0; i < size; i++)
+    {
+        if(final_output[i] != final_output_h[i])
+        {
+            cout<<"Difference in value - "<<i<<" - "<<test_histogram[i]<<" - "<<histogram_h[i]<<endl;
+            count = count + 1;
+        }
+    }
+    if (count == 0)
+    {
+        cout<<"All Test Passed Successfully"<<endl;
+    }
+    free(test_histogram);
+}
 
 int main(int argc, char* argv[])
 {
@@ -121,17 +151,21 @@ int main(int argc, char* argv[])
     cudaMemcpy(cdf_h, cdf_d, sizeof(double) * total_bins, cudaMemcpyDeviceToHost);
     cudaMemcpy(final_output_h, final_output_d, sizeof(double) * image_size, cudaMemcpyDeviceToHost);
     stopTime(&timer); printf("%f s\n", elapsedTime(timer));
-    cout<<"\nImage Histogram Distribution\n"<<endl;
-    for(int i = 0; i < total_bins; i++)
-    {
-        cout<<i<<" - "<<histogram_h[i]<<" - "<<output_h[i]<<" - "<<cdf_h[i]<<endl;
-    }
-    for(int i = 0; i < image_size; i++)
-    {
-        int finalv = input_h[i];
-        ff[i] = cdf_h[finalv];
+    printf("\nVerifying on CPU..."); fflush(stdout);
+    startTime(&timer);
+    verify(input_h, final_output_h, image_size, histogram_h, total_bins);
+    stopTime(&timer); printf("%f s\n", elapsedTime(timer));
+    // cout<<"\nImage Histogram Distribution\n"<<endl;
+    // for(int i = 0; i < total_bins; i++)
+    // {
+    //     cout<<i<<" - "<<histogram_h[i]<<" - "<<output_h[i]<<" - "<<cdf_h[i]<<endl;
+    // }
+    // for(int i = 0; i < image_size; i++)
+    // {
+    //     int finalv = input_h[i];
+    //     ff[i] = cdf_h[finalv];
 
-    }
+    // }
     printf("\nSaving the output..."); fflush(stdout);
     startTime(&timer);
     Mat input_image(height, width, CV_8UC1);
