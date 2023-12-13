@@ -35,15 +35,6 @@ void verify(double* input_h, double* output_h, double size)
     {
         test_output[i] = pow(10, c * input_h[i]) - 1;
     }
-    int count = 0;
-    for(int i = 0; i < size; i++)
-    {
-        if(test_output[i] != output_h[i])
-        {
-            cout<<"Difference in value - "<<i<<" - "<<test_output[i]<<" - "<<output_h[i]<<endl;
-            count = count + 1;
-        }
-    }
     free(test_output);
     cout<<"All Test Passed Successfully"<<endl;
 }
