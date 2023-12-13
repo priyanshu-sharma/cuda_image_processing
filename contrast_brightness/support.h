@@ -8,19 +8,19 @@ typedef struct {
     struct timeval endTime;
 } Timer;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+// #ifdef __cplusplus
+// extern "C" {
+// #endif
 // void verify(float *A, float *B, float *C, unsigned int dim);
 // void startTime(Timer* timer);
 // void stopTime(Timer* timer);
 // float elapsedTime(Timer timer);
-#ifdef __cplusplus
+// #ifdef __cplusplus
 void startTime(Timer* timer);
 void stopTime(Timer* timer);
 float elapsedTime(Timer timer);
-}
-#endif
+// }
+// #endif
 
 #define FATAL(msg, ...) \
     do {\
