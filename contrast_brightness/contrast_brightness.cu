@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
 
     contrast_brightness(input_d, output_d, image_size);
     time_t end = time(0);
-    cout<<"\nTotal Time - "<<end-start<<endl;
+    cout<<"\nTotal Time - "<<end<<" - "<<start<<" - "<<end-start<<endl;
     cuda_ret = cudaDeviceSynchronize();
     if(cuda_ret != cudaSuccess) printf("Unable to launch kernel");
 
