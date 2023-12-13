@@ -4,9 +4,9 @@
 #include <iostream>
 #include <chrono>
 #include "kernel.cu"
-
 using namespace cv;
 using namespace std;
+using namespace std::chrono;
 
 int main(int argc, char* argv[])
 {
