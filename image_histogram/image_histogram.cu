@@ -162,12 +162,11 @@ int main(int argc, char* argv[])
     // {
     //     cout<<i<<" - "<<histogram_h[i]<<" - "<<output_h[i]<<" - "<<cdf_h[i]<<endl;
     // }
-    // for(int i = 0; i < image_size; i++)
-    // {
-    //     int finalv = input_h[i];
-    //     ff[i] = cdf_h[finalv];
-
-    // }
+    for(int i = 0; i < image_size; i++)
+    {
+        int finalv = input_h[i];
+        ff[i] = cdf_h[finalv];
+    }
     printf("\nSaving the output..."); fflush(stdout);
     startTime(&timer);
     Mat input_image(height, width, CV_8UC1);
