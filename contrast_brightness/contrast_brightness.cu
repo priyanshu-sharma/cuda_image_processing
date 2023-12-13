@@ -2,9 +2,8 @@
 #include <stdint.h>
 #include <opencv2/opencv.hpp>
 #include <iostream>
-#include <bits/stdc++.h> 
 #include "kernel.cu"
-#include "support.h"
+#include <ctime>
 
 using namespace cv;
 using namespace std;
@@ -12,7 +11,7 @@ using namespace std;
 int main(int argc, char* argv[])
 {
     cudaError_t cuda_ret;
-    Timer timer;
+    // Timer timer;
     double *input_h, *output_h;
     double *input_d, *output_d;
 
@@ -52,10 +51,11 @@ int main(int argc, char* argv[])
 
     // Launch kernel using standard mat-add interface ---------------------------
     printf("\nLaunching kernel..."); fflush(stdout);
-    startTime(&timer);
+    time_t start = time(0);
 
     contrast_brightness(input_d, output_d, image_size);
-    stopTime(&timer); printf("%f s\n", elapsedTime(timer));
+    time_t end = time(0);
+    cout<<"\nTotal Time - "<<end-start<<endl;
     cuda_ret = cudaDeviceSynchronize();
     if(cuda_ret != cudaSuccess) printf("Unable to launch kernel");
 
