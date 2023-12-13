@@ -1,18 +1,38 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <opencv2/opencv.hpp>
 #include <iostream>
 #include "kernel.cu"
-#include <ctime>
+#include <sys/time.h>
+
+typedef struct {
+    struct timeval startTime;
+    struct timeval endTime;
+} Timer;
 
 using namespace cv;
 using namespace std;
+
+void startTime(Timer* timer) {
+    gettimeofday(&(timer->startTime), NULL);
+}
+
+void stopTime(Timer* timer) {
+    gettimeofday(&(timer->endTime), NULL);
+}
+
+float elapsedTime(Timer timer) {
+    return ((float) ((timer.endTime.tv_sec - timer.startTime.tv_sec) \
+                + (timer.endTime.tv_usec - timer.startTime.tv_usec)/1.0e6));
+}
 
 int main(int argc, char* argv[])
 {
     cudaError_t cuda_ret;
     double *input_h, *output_h;
     double *input_d, *output_d;
+    Timer timer;
 
     printf("\nReading the input image..."); fflush(stdout);
 
@@ -50,14 +70,10 @@ int main(int argc, char* argv[])
 
     // Launch kernel using standard mat-add interface ---------------------------
     printf("\nLaunching kernel..."); fflush(stdout);
-    time_t start = time(0);
-    cout<<"Start Time - "<<start<<endl;
-
+    startTime(&timer);
     contrast_brightness(input_d, output_d, image_size);
     if(cuda_ret != cudaSuccess) printf("Unable to launch kernel");
-    time_t end = time(0);
-    cout<<"End Time - "<<end<<endl;
-    cout<<"\nTotal Time - "<<end-start<<endl;
+    stopTime(&timer); printf("%f s\n", elapsedTime(timer));
     cuda_ret = cudaDeviceSynchronize();
 
 
