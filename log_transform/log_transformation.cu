@@ -35,7 +35,6 @@ void verify(double* input_h, double* output_h, double size)
     {
         test_output[i] = c * log(1 + input_h[i]);
     }
-    int count = 0;
     free(test_output);
     cout<<"All Test Passed Successfully"<<endl;
 }
