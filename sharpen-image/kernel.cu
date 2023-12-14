@@ -41,7 +41,6 @@ __global__ void sharpen_kernel(unsigned char *input, unsigned char *output, int 
     }
 }
 
-
 void sharpen_image(unsigned char *input, unsigned char *output, int width, int height, int channels) {
     unsigned char *dev_input, *dev_output;
     int stride = width * channels; // Adjusted stride for color images
