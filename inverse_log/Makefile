@@ -18,4 +18,4 @@ $(EXE): $(OBJ)
 	$(NVCC) $(OBJ) -o $(EXE) $(LD_FLAGS)
 
 clean:
-	rm -rf *.o $(EXE)
+	rm -rf *.o $(EXE) *.jpeg
