@@ -177,8 +177,8 @@ int main(int argc, char* argv[])
         for(int j = 0; j < width; j++)
         {
             input_image.at<uchar>(Point(j, i)) = input_h[i * stride + j];
-            output_image.at<uchar>(Point(j, i)) = final_output_h[i * stride + j];
-            ff_im.at<uchar>(Point(j, i)) = ff[i * stride + j];
+            ff_im.at<uchar>(Point(j, i)) = final_output_h[i * stride + j];
+            output_image.at<uchar>(Point(j, i)) = ff[i * stride + j];
         }
     }
     bool in_check = imwrite("input.jpeg", input_image);
@@ -190,11 +190,6 @@ int main(int argc, char* argv[])
     if (!out_check)
     {
         cout<<"Failed To save output"<<endl;
-    }
-    bool ff_check = imwrite("ff.jpeg", ff_im);
-    if (!ff_check)
-    {
-        cout<<"Failed To save ff"<<endl;
     }
     stopTime(&timer); printf("%f s\n", elapsedTime(timer));
     // verify(input_h, image_size, histogram_h, total_bins);
