@@ -38,8 +38,31 @@ int main(int argc, char* argv[])
         memcpy(&input_h[i * width], &myData[i * stride], width);
     }
 
+    // Start CPU timer
+    clock_t start_cpu = clock();
+
+    // Start CUDA timer
+    cudaEvent_t start, stop;
+    cudaEventCreate(&start);
+    cudaEventCreate(&stop);
+    cudaEventRecord(start);
+
     // Call the Gaussian blur function
     gaussianBlur(input_h, output_h, width, height, sigma);
+
+    // Stop CUDA timer
+    cudaEventRecord(stop);
+    cudaEventSynchronize(stop);
+    float milliseconds = 0;
+    cudaEventElapsedTime(&milliseconds, start, stop);
+
+    // Stop CPU timer
+    clock_t stop_cpu = clock();
+
+    // Calculate and print the elapsed CPU time
+    double duration_cpu = (double)(stop_cpu - start_cpu) / CLOCKS_PER_SEC * 1000.0; // Convert to milliseconds
+    printf("CPU Time: %.3f ms\n", duration_cpu);
+    printf("CUDA Time: %.3f ms\n", milliseconds);
 
     // Create an empty Mat to store the result
     Mat result(height, width, CV_8U, output_h);

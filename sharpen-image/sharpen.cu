@@ -1,6 +1,7 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
-#include "kernel.cu"
+#include "kernel.cu" 
+#include <ctime>
 
 using namespace cv;
 using namespace std;
@@ -29,7 +30,6 @@ int main(int argc, char* argv[])
     int width = image.cols;
     int height = image.rows;
     int channels = image.channels();
-    int stride = image.step;
     unsigned int image_size = width * height * channels;
 
     // Allocate memory for input and output images on host
@@ -40,8 +40,31 @@ int main(int argc, char* argv[])
     // Copy image data from OpenCV input image to the input array
     memcpy(input_h, image.data, image_size);
 
+    // Start CPU timer
+    clock_t start_cpu = clock();
+
+    // Start CUDA timer
+    cudaEvent_t start, stop;
+    cudaEventCreate(&start);
+    cudaEventCreate(&stop);
+    cudaEventRecord(start);
+
     // Call the sharpen function
     sharpen_image(input_h, output_h, width, height, channels);
+
+    // Stop CUDA timer
+    cudaEventRecord(stop);
+    cudaEventSynchronize(stop);
+    float milliseconds = 0;
+    cudaEventElapsedTime(&milliseconds, start, stop);
+
+    // Stop CPU timer
+    clock_t stop_cpu = clock();
+
+    // Calculate and print the elapsed CPU time
+    double duration_cpu = (double)(stop_cpu - start_cpu) / CLOCKS_PER_SEC * 1000.0; // Convert to milliseconds
+    cout << "CPU Time: " << duration_cpu << " ms\n";
+    cout << "CUDA Time: " << milliseconds << " ms\n";
 
     // Create an empty Mat to store the result
     Mat result(height, width, CV_8UC3, output_h);
